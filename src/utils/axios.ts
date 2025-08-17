@@ -110,7 +110,28 @@ async function getAvailableComponents(): Promise<string[]> {
         }
         
         const components = response.data
-            .filter((item: any) => item.type === 'dir' && !item.name.startsWith('.') && item.name !== 'src')
+            .filter((item: any) => {
+                // Only include directories that are actual components
+                if (item.type !== 'dir') return false;
+                
+                // Exclude hidden directories and system directories
+                if (item.name.startsWith('.')) return false;
+                
+                // Exclude Spartan NG library infrastructure directories/files
+                const excludedNames = [
+                    'src', // Library source root
+                    'node_modules', // Dependencies
+                    'dist', // Build output
+                    '.git' // Version control
+                ];
+                
+                if (excludedNames.includes(item.name)) return false;
+                
+                // Spartan NG components follow kebab-case naming pattern
+                // Valid component names: accordion, alert-dialog, button, etc.
+                const validComponentPattern = /^[a-z]+(-[a-z]+)*$/;
+                return validComponentPattern.test(item.name);
+            })
             .map((item: any) => item.name);
             
         if (components.length === 0) {
