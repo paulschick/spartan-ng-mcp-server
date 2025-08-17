@@ -789,7 +789,7 @@ async function getAvailableBlocks(category?: string): Promise<any> {
                     category,
                     blocks: blocks[categoryLower],
                     total: blocks[categoryLower].length,
-                    description: `${category.charAt(0).toUpperCase() + category.slice(1)} blocks available in shadcn/ui v4`,
+                    description: `${category.charAt(0).toUpperCase() + category.slice(1)} blocks (currently not supported in Spartan NG)`,
                     usage: `Use 'get_block' tool with the block name to get the full source code and implementation details.`
                 };
             } else {
@@ -845,7 +845,7 @@ function setGitHubApiKey(apiKey: string): void {
         // Remove authorization header if empty key provided
         delete (githubApi.defaults.headers as any)['Authorization'];
         console.error('GitHub API key removed - using unauthenticated requests');
-        console.error('For higher rate limits and reliability, provide a GitHub API token. See setup instructions: https://github.com/Jpisnice/shadcn-ui-mcp-server#readme');
+        console.error('For higher rate limits and reliability, provide a GitHub API token. See setup instructions for Spartan NG MCP Server.');
     }
 }
 

@@ -1,13 +1,11 @@
 /**
- * Framework selection utility for shadcn/ui MCP server
+ * Framework selection utility for Spartan NG MCP server
  *
- * This module handles switching between React and Svelte implementations
- * based on environment variables or command line arguments.
+ * This module provides Angular-specific implementation for Spartan NG components.
+ * The framework is set to Angular only, as this server focuses on Spartan NG.
  *
- * Usage:
- * - Set FRAMEWORK environment variable to 'react' or 'svelte' or 'vue'
- * - Or use --framework command line argument
- * - Defaults to 'react' if not specified
+ * Note: This file maintains backward compatibility with the MCP framework
+ * but only supports Angular/Spartan NG components.
  */
 
 import { logInfo, logWarning } from "./logger.js"

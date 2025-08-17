@@ -17,6 +17,6 @@ export async function handleGetComponentDemo({ componentName }: { componentName:
 export const schema = {
   componentName: {
     type: 'string',
-    description: 'Name of the shadcn/ui component (e.g., "accordion", "button")'
+    description: 'Name of the Spartan NG component (e.g., "accordion", "button")'
   }
 }; 
