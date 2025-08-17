@@ -58,37 +58,16 @@ export function getOptimizationInstructions(
   framework: string
 ): string {
   const getPerformanceInstructions = (framework: string) => {
-    switch (framework) {
-      case "svelte":
-        return `
-   - Use Svelte's built-in reactivity with runes for fine-grained updates
-   - Minimize the use of reactive statements that cause unnecessary updates
-   - Use derived state with $derived for computed values
-   - Consider using $effect only when necessary for side effects
-   - Implement lazy loading for heavy components
-   - Use $state.raw for non-reactive data to avoid unnecessary reactivity overhead
-   - Leverage Svelte's compile-time optimizations`
-
-      case "vue":
-        return `
-   - Use Vue 3's Composition API with reactive refs and computed properties
-   - Use defineAsyncComponent for code splitting and lazy loading
-   - Minimize watchers and use computed properties when possible
-   - Leverage Vue's built-in reactivity system efficiently
-   - Use shallowRef and shallowReactive for performance-critical scenarios
-   - Implement virtual scrolling for large lists using Vue Virtual Scroller`
-
-      case "react":
-      default:
-        return `
-   - Implement React.memo for preventing unnecessary re-renders
-   - Use useMemo and useCallback hooks appropriately
-   - Optimize bundle size by code splitting with React.lazy
-   - Implement virtual scrolling for large lists
-   - Minimize DOM manipulations and use refs efficiently
-   - Use lazy loading for heavy components
-   - Consider using React.startTransition for non-urgent updates`
-    }
+    // Angular-only performance instructions for Spartan NG
+    return `
+   - Use OnPush change detection strategy for better performance
+   - Implement trackBy functions for *ngFor loops with large datasets
+   - Use Angular signals for reactive state management
+   - Lazy load modules and components with Angular Router
+   - Minimize change detection cycles by using immutable data patterns
+   - Use async pipe for reactive data streams
+   - Implement virtual scrolling for large lists using Angular CDK
+   - Use Angular's built-in optimizations like standalone components`
   }
 
   const instructions = {

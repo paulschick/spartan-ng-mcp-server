@@ -42,11 +42,11 @@ export const schema = {
   },
   owner: {
     type: 'string',
-    description: 'Repository owner (default: "shadcn-ui")'
+    description: 'Repository owner (default: "goetzrobin")'
   },
   repo: {
     type: 'string',
-    description: 'Repository name (default: "ui")'
+    description: 'Repository name (default: "spartan")'
   },
   branch: {
     type: 'string',
