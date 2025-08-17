@@ -1,6 +1,6 @@
 # GitHub Token Setup
 
-Setting up a GitHub Personal Access Token will significantly improve your experience with the shadcn/ui MCP Server.
+Setting up a GitHub Personal Access Token will significantly improve your experience with the Spartan NG MCP Server.
 
 ## 🎯 Why You Need a Token
 
@@ -21,7 +21,7 @@ Setting up a GitHub Personal Access Token will significantly improve your experi
 ### Step 2: Generate New Token
 
 1. Click **"Generate new token (classic)"**
-2. Add a note: `"shadcn-ui MCP server"`
+2. Add a note: `"Spartan NG MCP server"`
 3. **Expiration**: Choose your preference (90 days recommended)
 4. **Scopes**: ✅ **No scopes needed!** (public repository access is sufficient)
 
@@ -35,7 +35,7 @@ Setting up a GitHub Personal Access Token will significantly improve your experi
 ### Method 1: Command Line (Quick testing)
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
 ### Method 2: Environment Variable (Recommended)
@@ -45,33 +45,27 @@ npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
 export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token_here
 
 # Then simply run:
-npx @jpisnice/shadcn-ui-mcp-server
+npx spartan-ng-mcp-server
 ```
 
 ### Method 3: Single Command
 
 ```bash
-GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token_here npx @jpisnice/shadcn-ui-mcp-server
+GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token_here npx spartan-ng-mcp-server
 ```
 
-## 🔧 Framework-Specific Usage
+## 🔧 Angular Usage
 
-### React (Default)
+### Spartan NG Components (Default)
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
-### Svelte
+### Development Mode
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte --github-api-key ghp_your_token_here
-```
-
-### Vue
-
-```bash
-npx @jpisnice/shadcn-ui-mcp-server --framework vue --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --dev --github-api-key ghp_your_token_here
 ```
 
 ## 🔒 Security Best Practices
