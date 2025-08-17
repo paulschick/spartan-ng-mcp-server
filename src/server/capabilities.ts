@@ -75,7 +75,7 @@ export const capabilities = {
   tools: {
     spartan_get_component: {
       description:
-        "Get the source code for a specific Spartan NG Angular component from the goetzrobin/spartan repository",
+        "Get complete source code for a specific Spartan NG Angular component with all file types (.ts, .html, .css, .scss) from the goetzrobin/spartan repository. Returns structured response with component metadata, file contents, exports, and dependencies.",
       inputSchema: {
         type: "object",
         properties: {
@@ -84,8 +84,22 @@ export const capabilities = {
             description:
               'Name of the Spartan NG component (e.g., "accordion", "button")',
           },
+          includeStories: {
+            type: "boolean",
+            description: "Include Storybook story files in the response (default: false)",
+            default: false
+          },
+          fileTypes: {
+            type: "array",
+            description: "Specific Angular file types to include: component, token, index, spec, stories (default: all available)",
+            items: {
+              type: "string",
+              enum: ["component", "token", "index", "spec", "stories"]
+            }
+          }
         },
         required: ["componentName"],
+        additionalProperties: false
       },
     },
     spartan_get_component_demo: {

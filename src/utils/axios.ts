@@ -97,8 +97,28 @@ async function getComponentFilesWithContent(
         const libResponse = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${componentPath}/src/lib`);
         
         if (!Array.isArray(libResponse.data)) {
-            throw new Error(`Invalid response for component ${componentName} lib directory`);
+            // Check if it's an error response from GitHub API
+            if (libResponse.data?.message) {
+                const message = libResponse.data.message;
+                if (message.includes('Not Found')) {
+                    throw new Error(`Component "${componentName}" not found in Spartan NG repository. The component may not exist or the repository structure may have changed.`);
+                } else if (message.includes('rate limit')) {
+                    throw new Error(`GitHub API rate limit exceeded while fetching component files. ${message} Consider setting GITHUB_PERSONAL_ACCESS_TOKEN environment variable for higher rate limits.`);
+                } else {
+                    throw new Error(`GitHub API error: ${message}`);
+                }
+            }
+            throw new Error(`Invalid response for component ${componentName} lib directory. Expected array of files but received ${typeof libResponse.data}.`);
         }
+
+        // Check if the lib directory is empty
+        if (libResponse.data.length === 0) {
+            throw new Error(`Component "${componentName}" lib directory is empty. The component may be incomplete or corrupted.`);
+        }
+
+        let filesProcessed = 0;
+        let filesSkipped = 0;
+        let filesFailed = 0;
 
         // Process each file in the lib directory
         for (const file of libResponse.data) {
@@ -111,18 +131,34 @@ async function getComponentFilesWithContent(
             const fileType = identifyAngularFileType(fileName, filePath);
             
             // Skip if specific file types are requested and this file doesn't match
-            if (fileTypes && !fileTypes.includes(fileType)) continue;
+            if (fileTypes && !fileTypes.includes(fileType)) {
+                filesSkipped++;
+                continue;
+            }
             
             // Skip stories files unless specifically requested
-            if (fileType === 'stories' && !includeStories) continue;
+            if (fileType === 'stories' && !includeStories) {
+                filesSkipped++;
+                continue;
+            }
             
             // Only process TypeScript files for now
-            if (!fileName.endsWith('.ts')) continue;
+            if (!fileName.endsWith('.ts')) {
+                filesSkipped++;
+                continue;
+            }
 
             try {
-                // Fetch file content
+                // Fetch file content with timeout and retry logic
                 const contentResponse = await githubRaw.get(`/${filePath}`);
                 const content = contentResponse.data;
+                
+                // Validate that content is not empty
+                if (!content || typeof content !== 'string') {
+                    logWarning(`File ${fileName} is empty or corrupted`);
+                    filesFailed++;
+                    continue;
+                }
                 
                 // Validate content structure
                 if (!isValidAngularFileContent(content, fileType)) {
@@ -141,8 +177,32 @@ async function getComponentFilesWithContent(
                 };
 
                 files.push(enhancedFile);
-            } catch (contentError) {
-                logWarning(`Failed to fetch content for file ${fileName}: ${contentError instanceof Error ? contentError.message : String(contentError)}`);
+                filesProcessed++;
+            } catch (contentError: any) {
+                filesFailed++;
+                
+                // Enhanced error categorization for individual file fetching
+                let errorReason = 'Unknown error';
+                if (contentError.response) {
+                    const status = contentError.response.status;
+                    if (status === 404) {
+                        errorReason = 'File not found (may have been moved or deleted)';
+                    } else if (status === 403) {
+                        errorReason = 'Access forbidden (rate limit or permissions)';
+                    } else if (status === 500) {
+                        errorReason = 'GitHub server error';
+                    } else {
+                        errorReason = `HTTP ${status} error`;
+                    }
+                } else if (contentError.code === 'ETIMEDOUT') {
+                    errorReason = 'Request timeout - file may be too large';
+                } else if (contentError.code === 'ECONNREFUSED') {
+                    errorReason = 'Connection refused - network issue';
+                } else if (contentError instanceof Error) {
+                    errorReason = contentError.message;
+                }
+                
+                logWarning(`Failed to fetch content for file ${fileName}: ${errorReason}`);
             }
         }
 
@@ -153,27 +213,93 @@ async function getComponentFilesWithContent(
                 const contentResponse = await githubRaw.get(`/${indexResponse.data.path}`);
                 const content = contentResponse.data;
                 
-                const indexFile: EnhancedComponentFile = {
-                    fileName: 'index.ts',
-                    filePath: indexResponse.data.path,
-                    fileType: 'index',
-                    content,
-                    size: content.length,
-                    lastModified: new Date(indexResponse.data.last_modified || Date.now()),
-                    sha: indexResponse.data.sha,
-                    downloadUrl: indexResponse.data.download_url
-                };
+                // Validate index content
+                if (!content || typeof content !== 'string') {
+                    logWarning(`Index file for ${componentName} is empty or corrupted`);
+                } else {
+                    const indexFile: EnhancedComponentFile = {
+                        fileName: 'index.ts',
+                        filePath: indexResponse.data.path,
+                        fileType: 'index',
+                        content,
+                        size: content.length,
+                        lastModified: new Date(indexResponse.data.last_modified || Date.now()),
+                        sha: indexResponse.data.sha,
+                        downloadUrl: indexResponse.data.download_url
+                    };
 
-                files.push(indexFile);
+                    files.push(indexFile);
+                    filesProcessed++;
+                }
             }
-        } catch (indexError) {
-            logWarning(`Could not fetch index.ts for ${componentName}: ${indexError instanceof Error ? indexError.message : String(indexError)}`);
+        } catch (indexError: any) {
+            // Enhanced error handling for index file
+            let indexErrorReason = 'Unknown error';
+            if (indexError.response) {
+                const status = indexError.response.status;
+                if (status === 404) {
+                    indexErrorReason = 'Index file not found (component may not have public exports)';
+                } else if (status === 403) {
+                    indexErrorReason = 'Access forbidden to index file';
+                } else {
+                    indexErrorReason = `HTTP ${status} error accessing index file`;
+                }
+            } else if (indexError instanceof Error) {
+                indexErrorReason = indexError.message;
+            }
+            
+            logWarning(`Could not fetch index.ts for ${componentName}: ${indexErrorReason}`);
+        }
+
+        // Log processing summary
+        logInfo(`File processing summary for ${componentName}: ${filesProcessed} processed, ${filesSkipped} skipped, ${filesFailed} failed`);
+
+        // Check if we got any files at all
+        if (files.length === 0) {
+            if (filesFailed > 0) {
+                throw new Error(`All ${filesFailed} TypeScript files for component "${componentName}" failed to load. This may be due to network issues, repository access problems, or corrupted files.`);
+            } else {
+                throw new Error(`No TypeScript files found for component "${componentName}" after processing ${filesSkipped} files. The component may not exist or may not contain the requested file types.`);
+            }
         }
 
         return files;
-    } catch (error) {
+    } catch (error: any) {
         logError(`Error fetching component files for ${componentName}`, error);
-        throw new Error(`Failed to fetch component files for "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
+        
+        // Enhanced top-level error handling with specific categorization
+        let errorMessage = `Failed to fetch component files for "${componentName}"`;
+        
+        if (error.response) {
+            const status = error.response.status;
+            const apiMessage = error.response.data?.message || 'No details provided';
+            
+            if (status === 404) {
+                errorMessage += `. Component directory not found. The component "${componentName}" may not exist in the Spartan NG repository or the repository structure may have changed.`;
+            } else if (status === 403) {
+                if (apiMessage.includes('rate limit')) {
+                    errorMessage += `. GitHub API rate limit exceeded: ${apiMessage}. Consider setting GITHUB_PERSONAL_ACCESS_TOKEN environment variable for higher rate limits.`;
+                } else {
+                    errorMessage += `. Access forbidden to component files: ${apiMessage}. This may be due to repository permissions or authentication issues.`;
+                }
+            } else if (status === 401) {
+                errorMessage += `. Authentication failed. Please check your GITHUB_PERSONAL_ACCESS_TOKEN if provided.`;
+            } else if (status >= 500) {
+                errorMessage += `. GitHub server error (${status}): ${apiMessage}. The GitHub API may be experiencing issues.`;
+            } else {
+                errorMessage += `. GitHub API error (${status}): ${apiMessage}`;
+            }
+        } else if (error.code === 'ETIMEDOUT') {
+            errorMessage += `. Request timeout. The component may have many files or the GitHub API may be experiencing issues.`;
+        } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+            errorMessage += `. Network error: ${error.message}. Please check your internet connection.`;
+        } else if (error instanceof Error) {
+            errorMessage += `: ${error.message}`;
+        } else {
+            errorMessage += `: ${String(error)}`;
+        }
+        
+        throw new Error(errorMessage);
     }
 }
 

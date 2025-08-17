@@ -41,11 +41,12 @@ export const toolSchemas = {
 export const tools = {
   'spartan_get_component': {
     name: 'spartan_get_component',
-    description: 'Get the source code for a specific Spartan NG Angular component from the goetzrobin/spartan repository',
+    description: 'Get complete source code for a specific Spartan NG Angular component with all file types (.ts, .html, .css, .scss) from the goetzrobin/spartan repository. Returns structured response with component metadata, file contents, exports, and dependencies.',
     inputSchema: {
       type: 'object',
       properties: getComponentSchema,
-      required: ['componentName']
+      required: ['componentName'],
+      additionalProperties: false
     }
   },
   'spartan_get_component_demo': {
