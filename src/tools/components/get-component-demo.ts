@@ -9,8 +9,8 @@ export async function handleGetComponentDemo({ componentName }: { componentName:
       content: [{ type: "text", text: demoCode }]
     };
   } catch (error) {
-    logError(`Failed to get demo for component "${componentName}"`, error);
-    throw new Error(`Failed to get demo for component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
+    logError(`Failed to get demo for Spartan NG component "${componentName}"`, error);
+    throw new Error(`Failed to get demo for Spartan NG component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

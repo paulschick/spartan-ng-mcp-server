@@ -9,8 +9,8 @@ export async function handleGetComponent({ componentName }: { componentName: str
       content: [{ type: "text", text: sourceCode }]
     };
   } catch (error) {
-    logError(`Failed to get component "${componentName}"`, error);
-    throw new Error(`Failed to get component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
+    logError(`Failed to get Spartan NG component "${componentName}"`, error);
+    throw new Error(`Failed to get Spartan NG component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

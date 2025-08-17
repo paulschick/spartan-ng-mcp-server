@@ -1,4 +1,3 @@
-// Framework utilities no longer needed as we focus on Angular only
 import {
   getOptimizationInstructions,
   getPageTypeSpecificInstructions,
@@ -417,8 +416,6 @@ Provide the optimized Angular component code with detailed explanations of impro
     features?: string
     actions?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {

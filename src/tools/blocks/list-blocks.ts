@@ -12,14 +12,14 @@ export async function handleListBlocks({ category }: { category?: string }) {
       }]
     };
   } catch (error) {
-    logError('Failed to list blocks', error);
-    throw new Error(`Failed to list blocks: ${error instanceof Error ? error.message : String(error)}`);
+    logError('Failed to list Spartan NG component blocks', error);
+    throw new Error(`Failed to list Spartan NG component blocks: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
 export const schema = {
   category: {
     type: 'string',
-    description: 'Filter by category (calendar, dashboard, login, sidebar, products)'
+    description: 'Filter by category (blocks are not available in Spartan NG)'
   }
 }; 

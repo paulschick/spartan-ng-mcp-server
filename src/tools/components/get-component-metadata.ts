@@ -6,14 +6,14 @@ export async function handleGetComponentMetadata({ componentName }: { componentN
     const axios = await getAxiosImplementation();
     const metadata = await axios.getComponentMetadata(componentName);
     if (!metadata) {
-      throw new Error(`Component metadata not found: ${componentName}`);
+      throw new Error(`Spartan NG component metadata not found: ${componentName}`);
     }
     return {
       content: [{ type: "text", text: JSON.stringify(metadata, null, 2) }]
     };
   } catch (error) {
-    logError(`Failed to get metadata for component "${componentName}"`, error);
-    throw new Error(`Failed to get metadata for component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
+    logError(`Failed to get metadata for Spartan NG component "${componentName}"`, error);
+    throw new Error(`Failed to get metadata for Spartan NG component "${componentName}": ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
