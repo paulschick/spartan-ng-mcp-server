@@ -220,41 +220,161 @@ function getFallbackComponents(): string[] {
 }
 
 /**
- * Fetch component metadata from the spartan helm library
+ * Fetch component metadata from the spartan helm library with Angular-specific information
  * @param componentName Name of the component
  * @returns Promise with component metadata
  */
 async function getComponentMetadata(componentName: string): Promise<any> {
     try {
-        // Try to get package.json from the component directory
-        const packageJsonPath = `${HELM_PATH}/${componentName.toLowerCase()}/package.json`;
-        const response = await githubRaw.get(`/${packageJsonPath}`);
-        const packageData = JSON.parse(response.data);
+        const componentPath = `${HELM_PATH}/${componentName.toLowerCase()}`;
+        
+        // Fetch index.ts to extract exports and module information
+        const indexPath = `${componentPath}/src/index.ts`;
+        let indexContent = '';
+        let exports: string[] = [];
+        let angularModuleName = '';
+        
+        try {
+            const indexResponse = await githubRaw.get(`/${indexPath}`);
+            indexContent = indexResponse.data;
+            
+            // Extract exports from index.ts
+            const exportMatches = indexContent.match(/export \* from ['"`]([^'"`]+)['"`]/g) || [];
+            const namedExports = indexContent.match(/export \{([^}]+)\}/g) || [];
+            
+            // Parse exports
+            exports = [
+                ...exportMatches.map(match => {
+                    const moduleMatch = match.match(/from ['"`]([^'"`]+)['"`]/);
+                    return moduleMatch ? moduleMatch[1] : '';
+                }).filter(Boolean),
+                ...namedExports.map(match => {
+                    const namedMatch = match.match(/\{([^}]+)\}/);
+                    return namedMatch ? namedMatch[1].split(',').map(exp => exp.trim()) : [];
+                }).flat()
+            ];
+            
+            // Extract Angular module name
+            const moduleMatch = indexContent.match(/export class (\w+Module)/);
+            if (moduleMatch) {
+                angularModuleName = moduleMatch[1];
+            }
+        } catch (indexError) {
+            logWarning(`Could not fetch index.ts for ${componentName}: ${indexError instanceof Error ? indexError.message : String(indexError)}`);
+        }
+        
+        // Fetch component files to get component information
+        const componentFiles: Array<{fileName: string, filePath: string, fileType: string}> = [];
+        try {
+            const libResponse = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${componentPath}/src/lib`);
+            if (Array.isArray(libResponse.data)) {
+                for (const file of libResponse.data) {
+                    if (file.type === 'file' && file.name.endsWith('.ts')) {
+                        let fileType = 'component';
+                        if (file.name.includes('.token.')) fileType = 'token';
+                        else if (file.name.includes('.spec.')) fileType = 'spec';
+                        else if (file.name.includes('.stories.')) fileType = 'stories';
+                        
+                        componentFiles.push({
+                            fileName: file.name,
+                            filePath: file.path,
+                            fileType
+                        });
+                    }
+                }
+            }
+        } catch (libError) {
+            logWarning(`Could not fetch lib directory for ${componentName}: ${libError instanceof Error ? libError.message : String(libError)}`);
+        }
+        
+        // Extract dependencies from the main component file
+        let dependencies: string[] = [];
+        let componentType = 'directive'; // Default for Spartan NG helm components
+        
+        if (componentFiles.length > 0) {
+            const mainComponentFile = componentFiles.find(f => f.fileType === 'component' && !f.fileName.includes('.token.'));
+            if (mainComponentFile) {
+                try {
+                    const componentResponse = await githubRaw.get(`/${mainComponentFile.filePath}`);
+                    const componentContent = componentResponse.data;
+                    
+                    // Extract imports to determine dependencies
+                    const importMatches = componentContent.match(/import[^;]+from ['"`]([^'"`]+)['"`]/g) || [];
+                    dependencies = importMatches
+                        .map((imp: string) => {
+                            const match = imp.match(/from ['"`]([^'"`]+)['"`]/);
+                            return match ? match[1] : '';
+                        })
+                        .filter((dep: string) => dep.startsWith('@') || dep.startsWith('libs/'))
+                        .filter(Boolean);
+                    
+                    // Determine component type
+                    if (componentContent.includes('@Component')) componentType = 'component';
+                    else if (componentContent.includes('@Directive')) componentType = 'directive';
+                    else if (componentContent.includes('@Pipe')) componentType = 'pipe';
+                } catch (componentError) {
+                    logWarning(`Could not fetch main component file for ${componentName}: ${componentError instanceof Error ? componentError.message : String(componentError)}`);
+                }
+            }
+        }
         
         return {
-            name: packageData.name || componentName,
-            version: packageData.version || '0.0.0',
-            description: packageData.description || `Spartan NG ${componentName} component`,
-            type: 'spartan:helm',
-            dependencies: packageData.dependencies ? Object.keys(packageData.dependencies) : [],
-            peerDependencies: packageData.peerDependencies ? Object.keys(packageData.peerDependencies) : [],
-            framework: 'angular',
-            library: 'spartan-ng'
-        };
-    } catch (error) {
-        // Fallback metadata if package.json is not available
-        logWarning(`Could not get package.json for ${componentName}, using fallback metadata`);
-        return {
             name: componentName,
-            version: 'unknown',
+            displayName: componentName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
             description: `Spartan NG ${componentName} component`,
             type: 'spartan:helm',
-            dependencies: [],
-            peerDependencies: ['@angular/core', '@angular/common'],
+            componentType,
             framework: 'angular',
-            library: 'spartan-ng'
+            library: 'spartan-ng',
+            repositoryPath: componentPath,
+            angularModule: angularModuleName,
+            exports,
+            dependencies: [...new Set(dependencies)], // Remove duplicates
+            files: componentFiles,
+            category: getCategoryFromComponentName(componentName)
+        };
+    } catch (error) {
+        // Fallback metadata if fetching fails
+        logWarning(`Could not get metadata for ${componentName}, using fallback metadata: ${error instanceof Error ? error.message : String(error)}`);
+        return {
+            name: componentName,
+            displayName: componentName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+            description: `Spartan NG ${componentName} component`,
+            type: 'spartan:helm',
+            componentType: 'directive',
+            framework: 'angular',
+            library: 'spartan-ng',
+            repositoryPath: `${HELM_PATH}/${componentName.toLowerCase()}`,
+            angularModule: '',
+            exports: [],
+            dependencies: ['@angular/core'],
+            files: [],
+            category: 'other'
         };
     }
+}
+
+/**
+ * Determine component category based on component name
+ * @param componentName Name of the component
+ * @returns Component category
+ */
+function getCategoryFromComponentName(componentName: string): string {
+    const formComponents = ['input', 'checkbox', 'radio-group', 'select', 'switch', 'slider', 'form-field', 'label'];
+    const layoutComponents = ['card', 'sheet', 'separator', 'aspect-ratio', 'scroll-area'];
+    const navigationComponents = ['breadcrumb', 'pagination', 'tabs', 'menu'];
+    const feedbackComponents = ['alert', 'progress', 'spinner', 'skeleton', 'sonner', 'tooltip'];
+    const overlayComponents = ['dialog', 'alert-dialog', 'popover', 'hover-card'];
+    const displayComponents = ['avatar', 'badge', 'button', 'typography', 'table', 'calendar', 'carousel'];
+    
+    if (formComponents.includes(componentName)) return 'form';
+    if (layoutComponents.includes(componentName)) return 'layout';
+    if (navigationComponents.includes(componentName)) return 'navigation';
+    if (feedbackComponents.includes(componentName)) return 'feedback';
+    if (overlayComponents.includes(componentName)) return 'overlay';
+    if (displayComponents.includes(componentName)) return 'display';
+    
+    return 'other';
 }
 
 /**
