@@ -2,10 +2,12 @@
 schema: 1
 story: "NG-101.001"
 story_title: "Update Repository Integration Infrastructure"
-gate: FAIL
-status_reason: "Critical implementation gaps identified - repository integration incomplete across codebase with 49+ files still containing shadcn-ui references"
+gate: SCOPE_EXPANDED
+status_reason: "Story scope expanded by SM to address QA findings - systematic conversion tasks added for complete infrastructure integration"
 reviewer: "Quinn (Test Architect)"
 updated: "2025-08-17T12:00:00Z"
+scope_updated: "2025-08-17T14:30:00Z"
+scope_updated_by: "Bob (Scrum Master)"
 
 # Gate waiver status
 waiver: { active: false }
@@ -30,8 +32,9 @@ top_issues:
   - id: "TEST-001"
     severity: medium
     finding: "File List incomplete - doesn't reflect all files that need updating"
-    suggested_action: "Create comprehensive list of all files requiring shadcn->spartan conversion"
+    suggested_action: "RESOLVED - Story restructured with comprehensive task groups covering all conversion work"
     suggested_owner: "sm"
+    status: "RESOLVED"
 
 # Quality scoring
 quality_score: 40  # 100 - (20×2 high) - (10×2 medium) = 40
