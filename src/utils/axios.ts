@@ -13,7 +13,7 @@ const githubApi = new Axios({
     headers: {
         "Content-Type": "application/json",
         "Accept": "application/vnd.github+json",
-        "User-Agent": "Mozilla/5.0 (compatible; ShadcnUiMcpServer/1.0.0)",
+        "User-Agent": "Mozilla/5.0 (compatible; SpartanNgMcpServer/1.0.0)",
         ...(process.env.GITHUB_PERSONAL_ACCESS_TOKEN && {
             "Authorization": `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`
         })
@@ -32,7 +32,7 @@ const githubApi = new Axios({
 const githubRaw = new Axios({
     baseURL: `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`,
     headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; ShadcnUiMcpServer/1.0.0)",
+        "User-Agent": "Mozilla/5.0 (compatible; SpartanNgMcpServer/1.0.0)",
     },
     timeout: 30000, // Increased from 15000 to 30000 (30 seconds)
     transformResponse: [(data) => data], // Return raw data
@@ -550,7 +550,8 @@ async function buildDirectoryTreeWithFallback(
  * @returns Promise with block code and structure
  */
 async function getBlockCode(blockName: string, includeComponents: boolean = true): Promise<any> {
-    const blocksPath = `${NEW_YORK_V4_PATH}/blocks`;
+    // Note: Block functionality not applicable to Spartan NG - throwing error
+    throw new Error("Block functionality is not supported for Spartan NG components. Use component discovery instead.");
     
     try {
         // First, check if it's a simple block file (.tsx)
@@ -709,7 +710,8 @@ async function getBlockCode(blockName: string, includeComponents: boolean = true
  * @returns Promise with categorized block list
  */
 async function getAvailableBlocks(category?: string): Promise<any> {
-    const blocksPath = `${NEW_YORK_V4_PATH}/blocks`;
+    // Note: Block functionality not applicable to Spartan NG - throwing error  
+    throw new Error("Block functionality is not supported for Spartan NG components. Use component discovery instead.");
     
     try {
         const response = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${blocksPath}?ref=${REPO_BRANCH}`);
