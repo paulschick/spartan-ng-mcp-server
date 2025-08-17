@@ -1,5 +1,11 @@
 import { Axios } from "axios";
 import { logError, logWarning, logInfo } from './logger.js';
+import { 
+    AngularFileType, 
+    EnhancedComponentFile, 
+    identifyAngularFileType,
+    isValidAngularFileContent 
+} from '../schemas/component.js';
 
 // Constants for the spartan repository structure
 const REPO_OWNER = 'goetzrobin';
@@ -72,6 +78,233 @@ async function getComponentSource(componentName: string): Promise<string> {
 }
 
 /**
+ * Fetch complete component files with content for Angular source code retrieval
+ * @param componentName Name of the component
+ * @param includeStories Whether to include story files (default: false)
+ * @param fileTypes Optional array of specific file types to include
+ * @returns Promise with array of enhanced component files with content
+ */
+async function getComponentFilesWithContent(
+    componentName: string, 
+    includeStories: boolean = false,
+    fileTypes?: AngularFileType[]
+): Promise<EnhancedComponentFile[]> {
+    const componentPath = `${HELM_PATH}/${componentName.toLowerCase()}`;
+    const files: EnhancedComponentFile[] = [];
+
+    try {
+        // Get the main component directory structure
+        const libResponse = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${componentPath}/src/lib`);
+        
+        if (!Array.isArray(libResponse.data)) {
+            // Check if it's an error response from GitHub API
+            if (libResponse.data?.message) {
+                const message = libResponse.data.message;
+                if (message.includes('Not Found')) {
+                    throw new Error(`Component "${componentName}" not found in Spartan NG repository. The component may not exist or the repository structure may have changed.`);
+                } else if (message.includes('rate limit')) {
+                    throw new Error(`GitHub API rate limit exceeded while fetching component files. ${message} Consider setting GITHUB_PERSONAL_ACCESS_TOKEN environment variable for higher rate limits.`);
+                } else {
+                    throw new Error(`GitHub API error: ${message}`);
+                }
+            }
+            throw new Error(`Invalid response for component ${componentName} lib directory. Expected array of files but received ${typeof libResponse.data}.`);
+        }
+
+        // Check if the lib directory is empty
+        if (libResponse.data.length === 0) {
+            throw new Error(`Component "${componentName}" lib directory is empty. The component may be incomplete or corrupted.`);
+        }
+
+        let filesProcessed = 0;
+        let filesSkipped = 0;
+        let filesFailed = 0;
+
+        // Process each file in the lib directory
+        for (const file of libResponse.data) {
+            if (file.type !== 'file') continue;
+
+            const fileName = file.name;
+            const filePath = file.path;
+            
+            // Identify file type using the schema function
+            const fileType = identifyAngularFileType(fileName, filePath);
+            
+            // Skip if specific file types are requested and this file doesn't match
+            if (fileTypes && !fileTypes.includes(fileType)) {
+                filesSkipped++;
+                continue;
+            }
+            
+            // Skip stories files unless specifically requested
+            if (fileType === 'stories' && !includeStories) {
+                filesSkipped++;
+                continue;
+            }
+            
+            // Process TypeScript, HTML, CSS, and SCSS files as per AC1
+            const supportedExtensions = ['.ts', '.html', '.css', '.scss'];
+            if (!supportedExtensions.some(ext => fileName.endsWith(ext))) {
+                filesSkipped++;
+                continue;
+            }
+
+            try {
+                // Fetch file content with timeout and retry logic
+                const contentResponse = await githubRaw.get(`/${filePath}`);
+                const content = contentResponse.data;
+                
+                // Validate that content is not empty
+                if (!content || typeof content !== 'string') {
+                    logWarning(`File ${fileName} is empty or corrupted`);
+                    filesFailed++;
+                    continue;
+                }
+                
+                // Validate content structure
+                if (!isValidAngularFileContent(content, fileType)) {
+                    logWarning(`File ${fileName} content validation failed for type ${fileType}`);
+                }
+
+                const enhancedFile: EnhancedComponentFile = {
+                    fileName,
+                    filePath,
+                    fileType,
+                    content,
+                    size: content.length,
+                    lastModified: new Date(file.last_modified || Date.now()),
+                    sha: file.sha,
+                    downloadUrl: file.download_url
+                };
+
+                files.push(enhancedFile);
+                filesProcessed++;
+            } catch (contentError: any) {
+                filesFailed++;
+                
+                // Enhanced error categorization for individual file fetching
+                let errorReason = 'Unknown error';
+                if (contentError.response) {
+                    const status = contentError.response.status;
+                    if (status === 404) {
+                        errorReason = 'File not found (may have been moved or deleted)';
+                    } else if (status === 403) {
+                        errorReason = 'Access forbidden (rate limit or permissions)';
+                    } else if (status === 500) {
+                        errorReason = 'GitHub server error';
+                    } else {
+                        errorReason = `HTTP ${status} error`;
+                    }
+                } else if (contentError.code === 'ETIMEDOUT') {
+                    errorReason = 'Request timeout - file may be too large';
+                } else if (contentError.code === 'ECONNREFUSED') {
+                    errorReason = 'Connection refused - network issue';
+                } else if (contentError instanceof Error) {
+                    errorReason = contentError.message;
+                }
+                
+                logWarning(`Failed to fetch content for file ${fileName}: ${errorReason}`);
+            }
+        }
+
+        // Also try to get the index.ts file from src/
+        try {
+            const indexResponse = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${componentPath}/src/index.ts`);
+            if (indexResponse.data && indexResponse.data.type === 'file') {
+                const contentResponse = await githubRaw.get(`/${indexResponse.data.path}`);
+                const content = contentResponse.data;
+                
+                // Validate index content
+                if (!content || typeof content !== 'string') {
+                    logWarning(`Index file for ${componentName} is empty or corrupted`);
+                } else {
+                    const indexFile: EnhancedComponentFile = {
+                        fileName: 'index.ts',
+                        filePath: indexResponse.data.path,
+                        fileType: 'index',
+                        content,
+                        size: content.length,
+                        lastModified: new Date(indexResponse.data.last_modified || Date.now()),
+                        sha: indexResponse.data.sha,
+                        downloadUrl: indexResponse.data.download_url
+                    };
+
+                    files.push(indexFile);
+                    filesProcessed++;
+                }
+            }
+        } catch (indexError: any) {
+            // Enhanced error handling for index file
+            let indexErrorReason = 'Unknown error';
+            if (indexError.response) {
+                const status = indexError.response.status;
+                if (status === 404) {
+                    indexErrorReason = 'Index file not found (component may not have public exports)';
+                } else if (status === 403) {
+                    indexErrorReason = 'Access forbidden to index file';
+                } else {
+                    indexErrorReason = `HTTP ${status} error accessing index file`;
+                }
+            } else if (indexError instanceof Error) {
+                indexErrorReason = indexError.message;
+            }
+            
+            logWarning(`Could not fetch index.ts for ${componentName}: ${indexErrorReason}`);
+        }
+
+        // Log processing summary
+        logInfo(`File processing summary for ${componentName}: ${filesProcessed} processed, ${filesSkipped} skipped, ${filesFailed} failed`);
+
+        // Check if we got any files at all
+        if (files.length === 0) {
+            if (filesFailed > 0) {
+                throw new Error(`All ${filesFailed} TypeScript files for component "${componentName}" failed to load. This may be due to network issues, repository access problems, or corrupted files.`);
+            } else {
+                throw new Error(`No TypeScript files found for component "${componentName}" after processing ${filesSkipped} files. The component may not exist or may not contain the requested file types.`);
+            }
+        }
+
+        return files;
+    } catch (error: any) {
+        logError(`Error fetching component files for ${componentName}`, error);
+        
+        // Enhanced top-level error handling with specific categorization
+        let errorMessage = `Failed to fetch component files for "${componentName}"`;
+        
+        if (error.response) {
+            const status = error.response.status;
+            const apiMessage = error.response.data?.message || 'No details provided';
+            
+            if (status === 404) {
+                errorMessage += `. Component directory not found. The component "${componentName}" may not exist in the Spartan NG repository or the repository structure may have changed.`;
+            } else if (status === 403) {
+                if (apiMessage.includes('rate limit')) {
+                    errorMessage += `. GitHub API rate limit exceeded: ${apiMessage}. Consider setting GITHUB_PERSONAL_ACCESS_TOKEN environment variable for higher rate limits.`;
+                } else {
+                    errorMessage += `. Access forbidden to component files: ${apiMessage}. This may be due to repository permissions or authentication issues.`;
+                }
+            } else if (status === 401) {
+                errorMessage += `. Authentication failed. Please check your GITHUB_PERSONAL_ACCESS_TOKEN if provided.`;
+            } else if (status >= 500) {
+                errorMessage += `. GitHub server error (${status}): ${apiMessage}. The GitHub API may be experiencing issues.`;
+            } else {
+                errorMessage += `. GitHub API error (${status}): ${apiMessage}`;
+            }
+        } else if (error.code === 'ETIMEDOUT') {
+            errorMessage += `. Request timeout. The component may have many files or the GitHub API may be experiencing issues.`;
+        } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+            errorMessage += `. Network error: ${error.message}. Please check your internet connection.`;
+        } else if (error instanceof Error) {
+            errorMessage += `: ${error.message}`;
+        } else {
+            errorMessage += `: ${String(error)}`;
+        }
+        
+        throw new Error(errorMessage);
+    }
+}
+
+/**
  * Fetch component stories/examples from the spartan repository
  * @param componentName Name of the component
  * @returns Promise with component story code
@@ -94,6 +327,236 @@ async function getComponentDemo(componentName: string): Promise<string> {
     }
     
     throw new Error(`Stories for component "${componentName}" not found in spartan repository`);
+}
+
+/**
+ * Organize component files according to Angular component patterns
+ * @param files Array of enhanced component files
+ * @returns Organized file structure following Angular patterns
+ */
+function organizeAngularComponentFiles(files: EnhancedComponentFile[]): {
+    core: EnhancedComponentFile[];
+    tokens: EnhancedComponentFile[];
+    tests: EnhancedComponentFile[];
+    stories: EnhancedComponentFile[];
+    exports: EnhancedComponentFile[];
+} {
+    const organized = {
+        core: [] as EnhancedComponentFile[],
+        tokens: [] as EnhancedComponentFile[],
+        tests: [] as EnhancedComponentFile[],
+        stories: [] as EnhancedComponentFile[],
+        exports: [] as EnhancedComponentFile[]
+    };
+
+    for (const file of files) {
+        switch (file.fileType) {
+            case 'component':
+                organized.core.push(file);
+                break;
+            case 'token':
+                organized.tokens.push(file);
+                break;
+            case 'spec':
+                organized.tests.push(file);
+                break;
+            case 'stories':
+                organized.stories.push(file);
+                break;
+            case 'index':
+                organized.exports.push(file);
+                break;
+            default:
+                // Default to core for unknown types
+                organized.core.push(file);
+        }
+    }
+
+    // Sort each category by file name for consistency
+    Object.keys(organized).forEach(key => {
+        organized[key as keyof typeof organized].sort((a, b) => a.fileName.localeCompare(b.fileName));
+    });
+
+    return organized;
+}
+
+/**
+ * Get Angular file patterns for a component
+ * @param componentName Name of the component
+ * @returns Expected file patterns for the component
+ */
+function getAngularComponentFilePatterns(componentName: string): {
+    expectedFiles: Array<{pattern: string, type: AngularFileType, required: boolean}>;
+    possiblePaths: string[];
+} {
+    const baseFileName = `hlm-${componentName.toLowerCase()}`;
+    const componentPath = `${HELM_PATH}/${componentName.toLowerCase()}/src/lib`;
+    
+    return {
+        expectedFiles: [
+            { pattern: `${baseFileName}.ts`, type: 'component', required: true },
+            { pattern: `${baseFileName}.token.ts`, type: 'token', required: false },
+            { pattern: `${baseFileName}.spec.ts`, type: 'spec', required: false },
+            { pattern: `${baseFileName}.stories.ts`, type: 'stories', required: false },
+            { pattern: 'index.ts', type: 'index', required: true }
+        ],
+        possiblePaths: [
+            `${componentPath}/${baseFileName}.ts`,
+            `${componentPath}/${baseFileName}.token.ts`,
+            `${componentPath}/${baseFileName}.spec.ts`,
+            `${componentPath}/${baseFileName}.stories.ts`,
+            `${HELM_PATH}/${componentName.toLowerCase()}/src/index.ts`
+        ]
+    };
+}
+
+/**
+ * Analyze Angular file dependencies and exports
+ * @param content File content to analyze
+ * @returns Dependency analysis result
+ */
+// Pre-compiled regex patterns for better performance
+const IMPORT_PATTERNS = {
+    named: /import\s*{[^}]*}\s*from\s*['"`]([^'"`]+)['"`]/g,
+    simple: /import\s*['"`]([^'"`]+)['"`]/g,
+    star: /import\s*\*\s*as\s*\w+\s*from\s*['"`]([^'"`]+)['"`]/g,
+    export: /export\s*{[^}]*}/g,
+    exportFrom: /export\s*\*\s*from\s*['"`]([^'"`]+)['"`]/g,
+    exportClass: /export\s*(class|interface|function|const|let|var)\s+(\w+)/g
+};
+
+function analyzeAngularFileDependencies(content: string): {
+    dependencies: string[];
+    exports: string[];
+    componentType?: 'component' | 'directive' | 'pipe';
+    imports: Array<{module: string, items: string[]}>;
+} {
+    const result = {
+        dependencies: [] as string[],
+        exports: [] as string[],
+        componentType: undefined as 'component' | 'directive' | 'pipe' | undefined,
+        imports: [] as Array<{module: string, items: string[]}>
+    };
+
+    // Extract import statements with detailed parsing using compiled patterns
+    const importMatches = Array.from(content.matchAll(IMPORT_PATTERNS.named));
+    const simpleImportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.simple));
+    const starImportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.star));
+
+    // Process detailed imports
+    importMatches.forEach(match => {
+        const module = match[1];
+        const itemsMatch = match[0].match(/{\s*([^}]+)\s*}/);
+        const items = itemsMatch 
+            ? itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean)
+            : [];
+        
+        result.imports.push({ module, items });
+        
+        // Add to dependencies if it's an external module
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
+        }
+    });
+
+    // Process simple imports
+    simpleImportMatches.forEach(match => {
+        const module = match[1];
+        result.imports.push({ module, items: [] });
+        
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
+        }
+    });
+
+    // Process star imports
+    starImportMatches.forEach(match => {
+        const module = match[1];
+        result.imports.push({ module, items: ['*'] });
+        
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
+        }
+    });
+
+    // Extract exports using compiled patterns
+    const exportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.export));
+    const exportFromMatches = Array.from(content.matchAll(IMPORT_PATTERNS.exportFrom));
+    const exportClassMatches = Array.from(content.matchAll(IMPORT_PATTERNS.exportClass));
+
+    exportMatches.forEach(match => {
+        const itemsMatch = match[0].match(/{\s*([^}]+)\s*}/);
+        if (itemsMatch) {
+            const items = itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean);
+            result.exports.push(...items);
+        }
+    });
+
+    exportFromMatches.forEach(match => {
+        const module = match[1];
+        result.exports.push(`* from ${module}`);
+    });
+
+    exportClassMatches.forEach(match => {
+        const exportedItem = match[2];
+        result.exports.push(exportedItem);
+    });
+
+    // Determine component type
+    if (content.includes('@Component')) {
+        result.componentType = 'component';
+    } else if (content.includes('@Directive')) {
+        result.componentType = 'directive';
+    } else if (content.includes('@Pipe')) {
+        result.componentType = 'pipe';
+    }
+
+    // Remove duplicates and filter
+    result.dependencies = [...new Set(result.dependencies)].filter(Boolean);
+    result.exports = [...new Set(result.exports)].filter(Boolean);
+
+    return result;
+}
+
+/**
+ * Extract exports from index.ts file
+ * @param indexContent Content of the index.ts file
+ * @returns Array of exported items
+ */
+function extractExportsFromIndex(indexContent: string): string[] {
+    const exports: string[] = [];
+    
+    // Match export * from patterns
+    const exportStarMatches = indexContent.match(/export\s*\*\s*from\s*['"`]([^'"`]+)['"`]/g) || [];
+    exportStarMatches.forEach(match => {
+        const moduleMatch = match.match(/from\s*['"`]([^'"`]+)['"`]/);
+        if (moduleMatch) {
+            exports.push(`* from ${moduleMatch[1]}`);
+        }
+    });
+    
+    // Match export { ... } from patterns
+    const exportNamedMatches = indexContent.match(/export\s*{[^}]*}\s*from\s*['"`]([^'"`]+)['"`]/g) || [];
+    exportNamedMatches.forEach(match => {
+        const itemsMatch = match.match(/{\s*([^}]+)\s*}/);
+        const moduleMatch = match.match(/from\s*['"`]([^'"`]+)['"`]/);
+        if (itemsMatch && moduleMatch) {
+            const items = itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean);
+            exports.push(...items);
+        }
+    });
+    
+    // Match direct exports
+    const directExportMatches = indexContent.match(/export\s*{[^}]*}/g) || [];
+    directExportMatches.forEach(match => {
+        const itemsMatch = match.match(/{\s*([^}]+)\s*}/);
+        if (itemsMatch) {
+            const items = itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean);
+            exports.push(...items);
+        }
+    });
+    
+    return [...new Set(exports)].filter(Boolean);
 }
 
 /**
@@ -264,16 +727,14 @@ async function getComponentMetadata(componentName: string): Promise<any> {
         }
         
         // Fetch component files to get component information
-        const componentFiles: Array<{fileName: string, filePath: string, fileType: string}> = [];
+        const componentFiles: Array<{fileName: string, filePath: string, fileType: AngularFileType}> = [];
         try {
             const libResponse = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${componentPath}/src/lib`);
             if (Array.isArray(libResponse.data)) {
                 for (const file of libResponse.data) {
                     if (file.type === 'file' && file.name.endsWith('.ts')) {
-                        let fileType = 'component';
-                        if (file.name.includes('.token.')) fileType = 'token';
-                        else if (file.name.includes('.spec.')) fileType = 'spec';
-                        else if (file.name.includes('.stories.')) fileType = 'stories';
+                        // Use the schema function for proper file type identification
+                        const fileType = identifyAngularFileType(file.name, file.path);
                         
                         componentFiles.push({
                             fileName: file.name,
@@ -287,7 +748,7 @@ async function getComponentMetadata(componentName: string): Promise<any> {
             logWarning(`Could not fetch lib directory for ${componentName}: ${libError instanceof Error ? libError.message : String(libError)}`);
         }
         
-        // Extract dependencies from the main component file
+        // Extract dependencies from the main component file with enhanced analysis
         let dependencies: string[] = [];
         let componentType = 'directive'; // Default for Spartan NG helm components
         
@@ -298,20 +759,10 @@ async function getComponentMetadata(componentName: string): Promise<any> {
                     const componentResponse = await githubRaw.get(`/${mainComponentFile.filePath}`);
                     const componentContent = componentResponse.data;
                     
-                    // Extract imports to determine dependencies
-                    const importMatches = componentContent.match(/import[^;]+from ['"`]([^'"`]+)['"`]/g) || [];
-                    dependencies = importMatches
-                        .map((imp: string) => {
-                            const match = imp.match(/from ['"`]([^'"`]+)['"`]/);
-                            return match ? match[1] : '';
-                        })
-                        .filter((dep: string) => dep.startsWith('@') || dep.startsWith('libs/'))
-                        .filter(Boolean);
-                    
-                    // Determine component type
-                    if (componentContent.includes('@Component')) componentType = 'component';
-                    else if (componentContent.includes('@Directive')) componentType = 'directive';
-                    else if (componentContent.includes('@Pipe')) componentType = 'pipe';
+                    // Enhanced dependency analysis
+                    const analysisResult = analyzeAngularFileDependencies(componentContent);
+                    dependencies = analysisResult.dependencies;
+                    componentType = analysisResult.componentType || componentType;
                 } catch (componentError) {
                     logWarning(`Could not fetch main component file for ${componentName}: ${componentError instanceof Error ? componentError.message : String(componentError)}`);
                 }
@@ -699,6 +1150,12 @@ export const axios = {
     getCategoryFromComponentName,
     setGitHubApiKey,
     getGitHubRateLimit,
+    // Enhanced Angular-specific functions for source code retrieval
+    getComponentFilesWithContent,
+    organizeAngularComponentFiles,
+    getAngularComponentFilePatterns,
+    analyzeAngularFileDependencies,
+    extractExportsFromIndex,
     // Path constants for easy access
     paths: {
         REPO_OWNER,
