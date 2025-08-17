@@ -124,6 +124,16 @@ export interface LightComponentMetadataResponse {
 }
 
 /**
+ * MCP Tool Response schema for component source code retrieval
+ */
+export interface ComponentFileResponse {
+  component: SpartanComponent;
+  files: EnhancedComponentFile[];
+  exports: string[];
+  dependencies: string[];
+}
+
+/**
  * Angular component dependency information
  */
 export interface AngularDependency {
@@ -134,11 +144,12 @@ export interface AngularDependency {
 }
 
 /**
- * Enhanced component file with content and size information
+ * Enhanced component file with content and size information for source retrieval
  */
 export interface EnhancedComponentFile extends ComponentFile {
-  content?: string;
-  size?: number;
+  content: string;
+  size: number;
+  lastModified: Date;
   sha?: string;
   downloadUrl?: string;
 }
@@ -223,6 +234,121 @@ export function isSpartanComponent(obj: any): obj is SpartanComponent {
     Array.isArray(obj.dependencies) &&
     Array.isArray(obj.files) &&
     isValidComponentCategory(obj.category);
+}
+
+/**
+ * Validation function for Angular file content structure
+ * @param content File content to validate
+ * @param fileType Angular file type to validate against
+ * @returns True if content matches expected structure for file type
+ */
+export function isValidAngularFileContent(content: string, fileType: AngularFileType): boolean {
+  if (!content || typeof content !== 'string') {
+    return false;
+  }
+
+  switch (fileType) {
+    case 'component':
+      // Component files should contain class declaration and @Component decorator
+      return /class\s+\w+.*Component/i.test(content) || content.includes('@Component') || content.includes('export');
+    case 'token':
+      // Token files contain design token definitions
+      return content.includes('export') && (content.includes('token') || content.includes('Token'));
+    case 'index':
+      // Index files contain exports
+      return content.includes('export');
+    case 'spec':
+      // Spec files contain test definitions
+      return content.includes('describe') || content.includes('it(') || content.includes('test(');
+    case 'stories':
+      // Stories files contain Storybook story definitions
+      return content.includes('export') && (content.includes('Story') || content.includes('story'));
+    default:
+      return true; // Allow unknown file types for extensibility
+  }
+}
+
+/**
+ * Type guard for EnhancedComponentFile interface
+ * @param obj Object to check
+ * @returns True if object matches EnhancedComponentFile interface
+ */
+export function isValidEnhancedComponentFile(obj: any): obj is EnhancedComponentFile {
+  return obj &&
+    typeof obj.fileName === 'string' &&
+    typeof obj.filePath === 'string' &&
+    isValidAngularFileType(obj.fileType) &&
+    typeof obj.content === 'string' &&
+    typeof obj.size === 'number' &&
+    obj.lastModified instanceof Date;
+}
+
+/**
+ * Type guard for ComponentFileResponse interface
+ * @param obj Object to check
+ * @returns True if object matches ComponentFileResponse interface
+ */
+export function isValidComponentFileResponse(obj: any): obj is ComponentFileResponse {
+  return obj &&
+    isSpartanComponent(obj.component) &&
+    Array.isArray(obj.files) &&
+    obj.files.every((file: any) => isValidEnhancedComponentFile(file)) &&
+    Array.isArray(obj.exports) &&
+    obj.exports.every((exp: any) => typeof exp === 'string') &&
+    Array.isArray(obj.dependencies) &&
+    obj.dependencies.every((dep: any) => typeof dep === 'string');
+}
+
+/**
+ * Identify Angular file type from filename and path
+ * @param fileName Name of the file
+ * @param filePath Full path to the file
+ * @returns AngularFileType or 'component' as default
+ */
+export function identifyAngularFileType(fileName: string, filePath: string): AngularFileType {
+  if (fileName.includes('.token.')) {
+    return 'token';
+  }
+  if (fileName === 'index.ts' || fileName.endsWith('index.ts')) {
+    return 'index';
+  }
+  if (fileName.includes('.spec.') || fileName.includes('.test.')) {
+    return 'spec';
+  }
+  if (fileName.includes('.stories.')) {
+    return 'stories';
+  }
+  // Default to component for .ts files
+  return 'component';
+}
+
+/**
+ * Format file type for tool responses with proper identification
+ * @param file Enhanced component file
+ * @returns Formatted file information with type identification
+ */
+export function formatFileTypeForResponse(file: EnhancedComponentFile): {
+  fileName: string;
+  fileType: AngularFileType;
+  fileTypeDescription: string;
+  size: number;
+  lastModified: string;
+} {
+  const typeDescriptions: Record<AngularFileType, string> = {
+    component: 'Angular Component/Directive',
+    token: 'Angular Design Token',
+    index: 'Module Export Index',
+    spec: 'Unit Test Specification',
+    stories: 'Storybook Story Definition'
+  };
+
+  return {
+    fileName: file.fileName,
+    fileType: file.fileType,
+    fileTypeDescription: typeDescriptions[file.fileType] || 'Angular Source File',
+    size: file.size,
+    lastModified: file.lastModified.toISOString()
+  };
 }
 
 /**
