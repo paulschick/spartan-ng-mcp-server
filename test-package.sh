@@ -48,9 +48,7 @@ fi
 echo "✅ Testing build files..."
 REQUIRED_FILES=(
     "build/index.js"
-
-    "build/handler.js"
-
+    "build/server/handler.js"
     "build/tools/index.js"
     "build/utils/axios.js"
 )
