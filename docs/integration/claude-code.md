@@ -1,6 +1,6 @@
 # Claude Code Integration
 
-Integrate the shadcn/ui MCP Server with Claude Code terminal for command-line AI development.
+Integrate the Spartan NG MCP Server with Claude Code terminal for command-line AI development.
 
 ## 🚀 Quick Setup
 
@@ -9,8 +9,8 @@ Integrate the shadcn/ui MCP Server with Claude Code terminal for command-line AI
 For Claude Code terminal users, you can add the MCP server directly:
 
 ```bash
-# Add the shadcn-ui MCP server with GitHub token
-claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server --github-api-key YOUR_API_KEY
+# Add the Spartan NG MCP server with GitHub token
+claude mcp add spartan-ng -- bunx -y spartan-ng-mcp-server --github-api-key YOUR_API_KEY
 ```
 
 ### Method 2: Configuration File
@@ -20,10 +20,10 @@ Add to your Claude Code configuration:
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
       "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
+        "spartan-ng-mcp-server",
         "--github-api-key",
         "ghp_your_token_here"
       ]
@@ -32,50 +32,22 @@ Add to your Claude Code configuration:
 }
 ```
 
-## 🎨 Framework-Specific Commands
-
-### React (Default)
-
-```bash
-claude mcp add shadcn-react -- bunx -y @jpisnice/shadcn-ui-mcp-server --github-api-key YOUR_API_KEY
-```
-
-### Svelte
-
-```bash
-claude mcp add shadcn-svelte -- bunx -y @jpisnice/shadcn-ui-mcp-server --framework svelte --github-api-key YOUR_API_KEY
-```
-
-### Vue
-
-```bash
-claude mcp add shadcn-vue -- bunx -y @jpisnice/shadcn-ui-mcp-server --framework vue --github-api-key YOUR_API_KEY
-```
-
 ## 🎯 Usage Examples
 
 ### Component Requests
 
 ```
-"Show me the shadcn/ui button component source code"
+"Show me the Spartan NG button component source code"
 "Get the card component with usage examples"
-"List all available shadcn/ui components"
+"List all available Spartan NG components"
 ```
 
-### Block Requests
+### Angular Development
 
 ```
-"Get the dashboard-01 block implementation"
-"Show me the calendar-01 block with all components"
-"List all available shadcn/ui blocks"
-```
-
-### Framework Comparison
-
-```
-"Compare the button component between React and Svelte"
-"Show me the Vue version of the card component"
-"Get the React dialog component with TypeScript"
+"Show me the Angular button component implementation"
+"Get the dialog component with TypeScript"
+"Show me how to use the card component in Angular"
 ```
 
 ## 🔧 Environment Variable Setup
@@ -87,7 +59,7 @@ Use environment variables for better security:
 export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_your_token_here
 
 # Add MCP server without hardcoding token
-claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server
+claude mcp add spartan-ng -- bunx -y spartan-ng-mcp-server
 ```
 
 ## 🐛 Troubleshooting
@@ -96,7 +68,7 @@ claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server
 
 1. **Verify server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Check command syntax**:

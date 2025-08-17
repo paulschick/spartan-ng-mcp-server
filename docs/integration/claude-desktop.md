@@ -1,6 +1,6 @@
 # Claude Desktop Integration
 
-Integrate the shadcn/ui MCP Server with Claude Desktop for seamless component access.
+Integrate the Spartan NG MCP Server with Claude Desktop for seamless component access.
 
 ## 🚀 Quick Setup
 
@@ -11,10 +11,10 @@ Add to your Claude Desktop configuration (`~/.config/Claude/claude_desktop_confi
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
       "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
+        "spartan-ng-mcp-server",
         "--github-api-key",
         "ghp_your_token_here"
       ]
@@ -28,9 +28,9 @@ Add to your Claude Desktop configuration (`~/.config/Claude/claude_desktop_confi
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "args": ["spartan-ng-mcp-server"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
       }
@@ -39,128 +39,26 @@ Add to your Claude Desktop configuration (`~/.config/Claude/claude_desktop_confi
 }
 ```
 
-## 🎨 Framework-Specific Configurations
+## ✅ Restart Claude Desktop
 
-### React (Default)
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-### Svelte
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-svelte": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "svelte",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-### Vue
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-vue": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "vue",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-## 🔧 Multiple Framework Setup
-
-Configure multiple frameworks for comparison:
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-react": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "react",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-svelte": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "svelte",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-vue": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "vue",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
+After editing your configuration file, restart Claude Desktop to load the MCP server.
 
 ## 🎯 Usage Examples
 
 ### Component Requests
 
 ```
-"Show me the shadcn/ui button component source code"
+"Show me the Spartan NG button component source code"
 "Get the card component with usage examples"
-"List all available shadcn/ui components"
+"List all available Spartan NG components"
 ```
 
-### Block Requests
+### Component Metadata
 
 ```
-"Get the dashboard-01 block implementation"
-"Show me the calendar-01 block with all components"
-"List all available shadcn/ui blocks"
-```
-
-### Framework Comparison
-
-```
-"Compare the button component between React and Svelte"
-"Show me the Vue version of the card component"
-"Get the React dialog component with TypeScript"
+"Get metadata for the button component"
+"Show me the dependencies for the card component"
+"Get the directory structure for Spartan NG"
 ```
 
 ## 🔍 Configuration File Location
