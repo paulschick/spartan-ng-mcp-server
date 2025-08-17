@@ -142,8 +142,9 @@ async function getComponentFilesWithContent(
                 continue;
             }
             
-            // Only process TypeScript files for now
-            if (!fileName.endsWith('.ts')) {
+            // Process TypeScript, HTML, CSS, and SCSS files as per AC1
+            const supportedExtensions = ['.ts', '.html', '.css', '.scss'];
+            if (!supportedExtensions.some(ext => fileName.endsWith(ext))) {
                 filesSkipped++;
                 continue;
             }
@@ -414,6 +415,16 @@ function getAngularComponentFilePatterns(componentName: string): {
  * @param content File content to analyze
  * @returns Dependency analysis result
  */
+// Pre-compiled regex patterns for better performance
+const IMPORT_PATTERNS = {
+    named: /import\s*{[^}]*}\s*from\s*['"`]([^'"`]+)['"`]/g,
+    simple: /import\s*['"`]([^'"`]+)['"`]/g,
+    star: /import\s*\*\s*as\s*\w+\s*from\s*['"`]([^'"`]+)['"`]/g,
+    export: /export\s*{[^}]*}/g,
+    exportFrom: /export\s*\*\s*from\s*['"`]([^'"`]+)['"`]/g,
+    exportClass: /export\s*(class|interface|function|const|let|var)\s+(\w+)/g
+};
+
 function analyzeAngularFileDependencies(content: string): {
     dependencies: string[];
     exports: string[];
@@ -427,82 +438,68 @@ function analyzeAngularFileDependencies(content: string): {
         imports: [] as Array<{module: string, items: string[]}>
     };
 
-    // Extract import statements with detailed parsing
-    const importMatches = content.match(/import\s*{[^}]*}\s*from\s*['"`]([^'"`]+)['"`]/g) || [];
-    const simpleImportMatches = content.match(/import\s*['"`]([^'"`]+)['"`]/g) || [];
-    const starImportMatches = content.match(/import\s*\*\s*as\s*\w+\s*from\s*['"`]([^'"`]+)['"`]/g) || [];
+    // Extract import statements with detailed parsing using compiled patterns
+    const importMatches = Array.from(content.matchAll(IMPORT_PATTERNS.named));
+    const simpleImportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.simple));
+    const starImportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.star));
 
     // Process detailed imports
-    importMatches.forEach(importStatement => {
-        const moduleMatch = importStatement.match(/from\s*['"`]([^'"`]+)['"`]/);
-        const itemsMatch = importStatement.match(/{\s*([^}]+)\s*}/);
+    importMatches.forEach(match => {
+        const module = match[1];
+        const itemsMatch = match[0].match(/{\s*([^}]+)\s*}/);
+        const items = itemsMatch 
+            ? itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean)
+            : [];
         
-        if (moduleMatch) {
-            const module = moduleMatch[1];
-            const items = itemsMatch 
-                ? itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean)
-                : [];
-            
-            result.imports.push({ module, items });
-            
-            // Add to dependencies if it's an external module
-            if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
-                result.dependencies.push(module);
-            }
+        result.imports.push({ module, items });
+        
+        // Add to dependencies if it's an external module
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
         }
     });
 
     // Process simple imports
-    simpleImportMatches.forEach(importStatement => {
-        const match = importStatement.match(/import\s*['"`]([^'"`]+)['"`]/);
-        if (match) {
-            const module = match[1];
-            result.imports.push({ module, items: [] });
-            
-            if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
-                result.dependencies.push(module);
-            }
+    simpleImportMatches.forEach(match => {
+        const module = match[1];
+        result.imports.push({ module, items: [] });
+        
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
         }
     });
 
     // Process star imports
-    starImportMatches.forEach(importStatement => {
-        const match = importStatement.match(/from\s*['"`]([^'"`]+)['"`]/);
-        if (match) {
-            const module = match[1];
-            result.imports.push({ module, items: ['*'] });
-            
-            if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
-                result.dependencies.push(module);
-            }
+    starImportMatches.forEach(match => {
+        const module = match[1];
+        result.imports.push({ module, items: ['*'] });
+        
+        if (module.startsWith('@') || module.startsWith('libs/') || !module.startsWith('.')) {
+            result.dependencies.push(module);
         }
     });
 
-    // Extract exports
-    const exportMatches = content.match(/export\s*{[^}]*}/g) || [];
-    const exportFromMatches = content.match(/export\s*\*\s*from\s*['"`]([^'"`]+)['"`]/g) || [];
-    const exportClassMatches = content.match(/export\s*(class|interface|function|const|let|var)\s+(\w+)/g) || [];
+    // Extract exports using compiled patterns
+    const exportMatches = Array.from(content.matchAll(IMPORT_PATTERNS.export));
+    const exportFromMatches = Array.from(content.matchAll(IMPORT_PATTERNS.exportFrom));
+    const exportClassMatches = Array.from(content.matchAll(IMPORT_PATTERNS.exportClass));
 
-    exportMatches.forEach(exportStatement => {
-        const itemsMatch = exportStatement.match(/{\s*([^}]+)\s*}/);
+    exportMatches.forEach(match => {
+        const itemsMatch = match[0].match(/{\s*([^}]+)\s*}/);
         if (itemsMatch) {
             const items = itemsMatch[1].split(',').map(item => item.trim()).filter(Boolean);
             result.exports.push(...items);
         }
     });
 
-    exportFromMatches.forEach(exportStatement => {
-        const match = exportStatement.match(/from\s*['"`]([^'"`]+)['"`]/);
-        if (match) {
-            result.exports.push(`* from ${match[1]}`);
-        }
+    exportFromMatches.forEach(match => {
+        const module = match[1];
+        result.exports.push(`* from ${module}`);
     });
 
-    exportClassMatches.forEach(exportStatement => {
-        const match = exportStatement.match(/export\s*(?:class|interface|function|const|let|var)\s+(\w+)/);
-        if (match) {
-            result.exports.push(match[1]);
-        }
+    exportClassMatches.forEach(match => {
+        const exportedItem = match[2];
+        result.exports.push(exportedItem);
     });
 
     // Determine component type
