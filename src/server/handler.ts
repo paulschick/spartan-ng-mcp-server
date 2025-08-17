@@ -95,8 +95,8 @@ export const setupHandlers = (server: Server): void => {
         // Return the tools that are registered with the server
         const registeredTools = [
           {
-            name: 'get_component',
-            description: 'Get the source code for a specific Spartan NG Angular component',
+            name: 'spartan_get_component',
+            description: 'Get the source code for a specific Spartan NG Angular component from the goetzrobin/spartan repository',
             inputSchema: {
               type: 'object',
               properties: {
@@ -109,8 +109,8 @@ export const setupHandlers = (server: Server): void => {
             },
           },
           {
-            name: 'get_component_demo',
-            description: 'Get demo code illustrating how a Spartan NG Angular component should be used',
+            name: 'spartan_get_component_demo',
+            description: 'Get demo code and usage examples for a specific Spartan NG Angular component from stories and documentation',
             inputSchema: {
               type: 'object',
               properties: {
@@ -123,16 +123,28 @@ export const setupHandlers = (server: Server): void => {
             },
           },
           {
-            name: 'list_components',
-            description: 'Get all available Spartan NG Angular components',
+            name: 'spartan_list_components',
+            description: 'Get all available Spartan NG Angular components with optional category filtering and categorization',
             inputSchema: {
               type: 'object',
-              properties: {},
+              properties: {
+                category: {
+                  type: 'string',
+                  description: 'Filter components by category (form, layout, navigation, feedback, overlay, display)',
+                  enum: ['form', 'layout', 'navigation', 'feedback', 'overlay', 'display']
+                },
+                includeCategories: {
+                  type: 'boolean', 
+                  description: 'Include category information in response (default: true)',
+                  default: true
+                }
+              },
+              additionalProperties: false
             },
           },
           {
-            name: 'get_component_metadata',
-            description: 'Get metadata for a specific Spartan NG Angular component',
+            name: 'spartan_get_component_metadata',
+            description: 'Get comprehensive metadata for a specific Spartan NG Angular component including files, dependencies, and Angular-specific information',
             inputSchema: {
               type: 'object',
               properties: {
@@ -140,13 +152,19 @@ export const setupHandlers = (server: Server): void => {
                   type: 'string',
                   description: 'Name of the Spartan NG component (e.g., "accordion", "button")',
                 },
+                includeFiles: {
+                  type: 'boolean',
+                  description: 'Include detailed file information in response (default: true)',
+                  default: true
+                }
               },
               required: ['componentName'],
+              additionalProperties: false
             },
           },
           {
-            name: 'get_directory_structure',
-            description: 'Get the directory structure of the Spartan NG repository',
+            name: 'spartan_get_directory_structure',
+            description: 'Get the directory structure of the Spartan NG Angular component library (goetzrobin/spartan repository)',
             inputSchema: {
               type: 'object',
               properties: {

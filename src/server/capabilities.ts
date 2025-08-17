@@ -73,9 +73,9 @@ export const capabilities = {
     },
   },
   tools: {
-    get_component: {
+    spartan_get_component: {
       description:
-        "Get the source code for a specific Spartan NG Angular component",
+        "Get the source code for a specific Spartan NG Angular component from the goetzrobin/spartan repository",
       inputSchema: {
         type: "object",
         properties: {
@@ -88,9 +88,9 @@ export const capabilities = {
         required: ["componentName"],
       },
     },
-    get_component_demo: {
+    spartan_get_component_demo: {
       description:
-        "Get demo code illustrating how a Spartan NG Angular component should be used",
+        "Get demo code and usage examples for a specific Spartan NG Angular component from stories and documentation",
       inputSchema: {
         type: "object",
         properties: {
@@ -103,15 +103,27 @@ export const capabilities = {
         required: ["componentName"],
       },
     },
-    list_components: {
-      description: "Get all available Spartan NG Angular components",
+    spartan_list_components: {
+      description: "Get all available Spartan NG Angular components with optional category filtering and categorization",
       inputSchema: {
         type: "object",
-        properties: {},
+        properties: {
+          category: {
+            type: "string",
+            description: "Filter components by category (form, layout, navigation, feedback, overlay, display)",
+            enum: ["form", "layout", "navigation", "feedback", "overlay", "display"]
+          },
+          includeCategories: {
+            type: "boolean", 
+            description: "Include category information in response (default: true)",
+            default: true
+          }
+        },
+        additionalProperties: false
       },
     },
-    get_component_metadata: {
-      description: "Get metadata for a specific Spartan NG Angular component",
+    spartan_get_component_metadata: {
+      description: "Get comprehensive metadata for a specific Spartan NG Angular component including files, dependencies, and Angular-specific information",
       inputSchema: {
         type: "object",
         properties: {
@@ -120,13 +132,19 @@ export const capabilities = {
             description:
               'Name of the Spartan NG component (e.g., "accordion", "button")',
           },
+          includeFiles: {
+            type: "boolean",
+            description: "Include detailed file information in response (default: true)",
+            default: true
+          }
         },
         required: ["componentName"],
+        additionalProperties: false
       },
     },
-    get_directory_structure: {
+    spartan_get_directory_structure: {
       description:
-        "Get the directory structure of the Spartan NG repository",
+        "Get the directory structure of the Spartan NG Angular component library (goetzrobin/spartan repository)",
       inputSchema: {
         type: "object",
         properties: {
