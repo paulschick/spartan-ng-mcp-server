@@ -140,6 +140,16 @@ export function validateAndSanitizeParams<T>(
   method: string,
   params: any
 ): T {
+  // Reject any framework-specific parameters as this server only supports Angular
+  if (params && typeof params === 'object') {
+    const forbiddenParams = ['framework', 'framework_type', 'react', 'vue', 'svelte'];
+    const foundForbidden = forbiddenParams.find(param => param in params);
+    
+    if (foundForbidden) {
+      throw new Error(`This server only supports Angular/Spartan NG. Framework selection parameter '${foundForbidden}' is not supported.`);
+    }
+  }
+
   const schema = getValidationSchema(method);
   
   if (!schema) {
