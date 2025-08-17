@@ -35,25 +35,25 @@ npx @jpisnice/shadcn-ui-mcp-server --framework vue
 
 ## 📚 Documentation
 
-| Section | Description |
-|---------|-------------|
-| [🚀 Getting Started](docs/getting-started/) | Installation, setup, and first steps |
-| [⚙️ Configuration](docs/configuration/) | Framework selection, tokens, and options |
-| [🔌 Integration](docs/integration/) | Editor and tool integrations |
-| [📖 Usage](docs/usage/) | Examples, tutorials, and use cases |
-| [🎨 Frameworks](docs/frameworks/) | Framework-specific documentation |
-| [🐛 Troubleshooting](docs/troubleshooting/) | Common issues and solutions |
-| [🔧 API Reference](docs/api/) | Tool reference and technical details |
+| Section                                     | Description                              |
+|---------------------------------------------|------------------------------------------|
+| [🚀 Getting Started](docs/getting-started/) | Installation, setup, and first steps     |
+| [⚙️ Configuration](docs/configuration/)     | Framework selection, tokens, and options |
+| [🔌 Integration](docs/integration/)         | Editor and tool integrations             |
+| [📖 Usage](docs/usage/)                     | Examples, tutorials, and use cases       |
+| [🎨 Frameworks](docs/frameworks/)           | Framework-specific documentation         |
+| [🐛 Troubleshooting](docs/troubleshooting/) | Common issues and solutions              |
+| [🔧 API Reference](docs/api/)               | Tool reference and technical details     |
 
 ## 🎨 Framework Support
 
 This MCP server supports three popular shadcn implementations:
 
-| Framework | Repository | Maintainer | Description |
-|-----------|------------|------------|-------------|
-| **React** (default) | [shadcn/ui](https://ui.shadcn.com/) | [shadcn](https://github.com/shadcn) | React components from shadcn/ui v4 |
-| **Svelte** | [shadcn-svelte](https://www.shadcn-svelte.com/) | [huntabyte](https://github.com/huntabyte) | Svelte components from shadcn-svelte |
-| **Vue** | [shadcn-vue](https://www.shadcn-vue.com/) | [unovue](https://github.com/unovue) | Vue components from shadcn-vue |
+| Framework           | Repository                                      | Maintainer                                | Description                          |
+|---------------------|-------------------------------------------------|-------------------------------------------|--------------------------------------|
+| **React** (default) | [shadcn/ui](https://ui.shadcn.com/)             | [shadcn](https://github.com/shadcn)       | React components from shadcn/ui v4   |
+| **Svelte**          | [shadcn-svelte](https://www.shadcn-svelte.com/) | [huntabyte](https://github.com/huntabyte) | Svelte components from shadcn-svelte |
+| **Vue**             | [shadcn-vue](https://www.shadcn-vue.com/)       | [unovue](https://github.com/unovue)       | Vue components from shadcn-vue       |
 
 ## 🛠️ Essential Setup
 
