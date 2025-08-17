@@ -1,5 +1,11 @@
 import { getAxiosImplementation } from '../../utils/framework.js';
 import { logError } from '../../utils/logger.js';
+import { 
+  isValidComponentName,
+  isSpartanComponent,
+  type ComponentMetadataResponse,
+  type LightComponentMetadataResponse 
+} from '../../schemas/component.js';
 
 export async function handleGetComponentMetadata({ 
   componentName, 
@@ -9,28 +15,46 @@ export async function handleGetComponentMetadata({
   includeFiles?: boolean; 
 }) {
   try {
+    // Validate component name format
+    if (!isValidComponentName(componentName)) {
+      throw new Error(`Invalid component name format: ${componentName}. Component names must use kebab-case (e.g., "alert-dialog", "button")`);
+    }
+    
     const axios = await getAxiosImplementation();
     const metadata = await axios.getComponentMetadata(componentName);
+    
     if (!metadata) {
       throw new Error(`Spartan NG component metadata not found: ${componentName}`);
     }
     
-    // Optionally exclude file details for lighter responses
+    // Validate metadata structure
+    if (!isSpartanComponent(metadata)) {
+      logError(`Invalid component metadata structure for ${componentName}`, metadata);
+      throw new Error(`Invalid component metadata structure for ${componentName}`);
+    }
+    
+    // Format response based on includeFiles parameter
+    let response: ComponentMetadataResponse | LightComponentMetadataResponse;
+    
     if (!includeFiles) {
       const { files, ...metadataWithoutFiles } = metadata;
-      return {
-        content: [{ 
-          type: "text", 
-          text: JSON.stringify({
-            ...metadataWithoutFiles,
-            fileCount: files?.length || 0
-          }, null, 2) 
-        }]
+      response = {
+        metadata: {
+          ...metadataWithoutFiles,
+          fileCount: files?.length || 0
+        }
+      };
+    } else {
+      response = {
+        metadata
       };
     }
     
     return {
-      content: [{ type: "text", text: JSON.stringify(metadata, null, 2) }]
+      content: [{ 
+        type: "text", 
+        text: JSON.stringify(response, null, 2) 
+      }]
     };
   } catch (error) {
     logError(`Failed to get metadata for Spartan NG component "${componentName}"`, error);

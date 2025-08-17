@@ -1,25 +1,39 @@
 import { getAxiosImplementation } from '../../utils/framework.js';
 import { logError } from '../../utils/logger.js';
+import { 
+  createComponentListResponse, 
+  isValidComponentCategory,
+  type ComponentListResponse,
+  type SimpleComponentListResponse 
+} from '../../schemas/component.js';
 
 export async function handleListComponents(args?: { category?: string; includeCategories?: boolean }) {
   try {
     const axios = await getAxiosImplementation();
     
+    // Validate category filter if provided
+    if (args?.category && !isValidComponentCategory(args.category)) {
+      throw new Error(`Invalid category: ${args.category}. Valid categories are: form, layout, navigation, feedback, overlay, display`);
+    }
+    
     // Use new categorized listing function
     const result = await axios.getAvailableComponentsWithCategories(args?.category);
     
     // Format response based on whether categories are requested
-    const response = args?.includeCategories === false 
-      ? {
-          components: result.components.map(comp => comp.name).sort(),
-          total: result.totalCount
-        }
-      : {
-          components: result.components,
-          categories: result.categories,
-          total: result.totalCount,
-          ...(args?.category && { filteredBy: args.category })
-        };
+    let response: ComponentListResponse | SimpleComponentListResponse;
+    
+    if (args?.includeCategories === false) {
+      response = {
+        components: result.components.map(comp => comp.name).sort(),
+        total: result.totalCount
+      };
+    } else {
+      response = createComponentListResponse(
+        result.components,
+        result.categories,
+        args?.category
+      );
+    }
     
     return {
       content: [{ 
