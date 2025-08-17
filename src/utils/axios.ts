@@ -1,13 +1,11 @@
 import { Axios } from "axios";
 import { logError, logWarning, logInfo } from './logger.js';
 
-// Constants for the v4 repository structure
-const REPO_OWNER = 'shadcn-ui';
-const REPO_NAME = 'ui';
+// Constants for the spartan repository structure
+const REPO_OWNER = 'goetzrobin';
+const REPO_NAME = 'spartan';
 const REPO_BRANCH = 'main';
-const V4_BASE_PATH = 'apps/v4';
-const REGISTRY_PATH = `${V4_BASE_PATH}/registry`;
-const NEW_YORK_V4_PATH = `${REGISTRY_PATH}/new-york-v4`;
+const HELM_PATH = 'libs/helm';
 
 // GitHub API for accessing repository structure and metadata
 const githubApi = new Axios({
@@ -41,56 +39,82 @@ const githubRaw = new Axios({
 });
 
 /**
- * Fetch component source code from the v4 registry
+ * Fetch component source code from the spartan helm library
  * @param componentName Name of the component
  * @returns Promise with component source code
  */
 async function getComponentSource(componentName: string): Promise<string> {
-    const componentPath = `${NEW_YORK_V4_PATH}/ui/${componentName.toLowerCase()}.tsx`;
+    // Try to get the main component TypeScript file
+    const componentPath = `${HELM_PATH}/${componentName.toLowerCase()}/src/lib/${componentName.toLowerCase()}.directive.ts`;
     
     try {
         const response = await githubRaw.get(`/${componentPath}`);
         return response.data;
     } catch (error) {
-        throw new Error(`Component "${componentName}" not found in v4 registry`);
+        // Fallback: try alternative file patterns for Angular components
+        const fallbackPaths = [
+            `${HELM_PATH}/${componentName.toLowerCase()}/src/lib/hlm-${componentName.toLowerCase()}.ts`,
+            `${HELM_PATH}/${componentName.toLowerCase()}/src/index.ts`,
+            `${HELM_PATH}/${componentName.toLowerCase()}/index.ts`
+        ];
+        
+        for (const fallbackPath of fallbackPaths) {
+            try {
+                const fallbackResponse = await githubRaw.get(`/${fallbackPath}`);
+                return fallbackResponse.data;
+            } catch {
+                // Continue to next fallback
+            }
+        }
+        
+        throw new Error(`Component "${componentName}" not found in spartan helm library`);
     }
 }
 
 /**
- * Fetch component demo/example from the v4 registry
+ * Fetch component stories/examples from the spartan repository
  * @param componentName Name of the component
- * @returns Promise with component demo code
+ * @returns Promise with component story code
  */
 async function getComponentDemo(componentName: string): Promise<string> {
-    const demoPath = `${NEW_YORK_V4_PATH}/examples/${componentName.toLowerCase()}-demo.tsx`;
+    // Try to get Storybook stories for the component
+    const storyPaths = [
+        `apps/ui-storybook/src/stories/${componentName.toLowerCase()}.stories.ts`,
+        `apps/storybook/stories/${componentName.toLowerCase()}.stories.ts`,
+        `${HELM_PATH}/${componentName.toLowerCase()}/src/lib/${componentName.toLowerCase()}.stories.ts`
+    ];
     
-    try {
-        const response = await githubRaw.get(`/${demoPath}`);
-        return response.data;
-    } catch (error) {
-        throw new Error(`Demo for component "${componentName}" not found in v4 registry`);
+    for (const storyPath of storyPaths) {
+        try {
+            const response = await githubRaw.get(`/${storyPath}`);
+            return response.data;
+        } catch {
+            // Continue to next path
+        }
     }
+    
+    throw new Error(`Stories for component "${componentName}" not found in spartan repository`);
 }
 
 /**
- * Fetch all available components from the registry
+ * Fetch all available components from the spartan helm library
  * @returns Promise with list of component names
  */
 async function getAvailableComponents(): Promise<string[]> {
     try {
-        // First try the GitHub API
-        const response = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${NEW_YORK_V4_PATH}/ui`);
+        // Get components from the libs/helm directory
+        const response = await githubApi.get(`/repos/${REPO_OWNER}/${REPO_NAME}/contents/${HELM_PATH}`);
         
         if (!response.data || !Array.isArray(response.data)) {
             throw new Error('Invalid response from GitHub API');
         }
         
         const components = response.data
-            .filter((item: any) => item.type === 'file' && item.name.endsWith('.tsx'))
-            .map((item: any) => item.name.replace('.tsx', ''));
+            .filter((item: any) => item.type === 'dir' && !item.name.startsWith('.') && item.name !== 'src')
+            .map((item: any) => item.name);
             
         if (components.length === 0) {
-            throw new Error('No components found in the registry');
+            throw new Error('No components found in the spartan helm library');
         }
         
         return components;
@@ -105,7 +129,7 @@ async function getAvailableComponents(): Promise<string[]> {
             if (status === 403 && message.includes('rate limit')) {
                 throw new Error(`GitHub API rate limit exceeded. Please set GITHUB_PERSONAL_ACCESS_TOKEN environment variable for higher limits. Error: ${message}`);
             } else if (status === 404) {
-                throw new Error(`Components directory not found. The path ${NEW_YORK_V4_PATH}/ui may not exist in the repository.`);
+                throw new Error(`Components directory not found. The path ${HELM_PATH} may not exist in the repository.`);
             } else if (status === 401) {
                 throw new Error(`Authentication failed. Please check your GITHUB_PERSONAL_ACCESS_TOKEN if provided.`);
             } else {
@@ -125,7 +149,7 @@ async function getAvailableComponents(): Promise<string[]> {
 }
 
 /**
- * Fallback list of known shadcn/ui v4 components
+ * Fallback list of known Spartan NG helm components
  * This is used when the GitHub API is unavailable
  */
 function getFallbackComponents(): string[] {
@@ -141,83 +165,74 @@ function getFallbackComponents(): string[] {
         'calendar',
         'card',
         'carousel',
-        'chart',
         'checkbox',
-        'collapsible',
         'command',
-        'context-menu',
+        'date-picker',
         'dialog',
-        'drawer',
-        'dropdown-menu',
-        'form',
+        'form-field',
         'hover-card',
+        'icon',
         'input',
         'input-otp',
         'label',
-        'menubar',
-        'navigation-menu',
+        'menu',
         'pagination',
         'popover',
         'progress',
         'radio-group',
-        'resizable',
         'scroll-area',
         'select',
         'separator',
         'sheet',
-        'sidebar',
         'skeleton',
         'slider',
         'sonner',
+        'spinner',
         'switch',
         'table',
         'tabs',
-        'textarea',
         'toggle',
         'toggle-group',
-        'tooltip'
+        'tooltip',
+        'typography'
     ];
 }
 
 /**
- * Fetch component metadata from the registry
+ * Fetch component metadata from the spartan helm library
  * @param componentName Name of the component
  * @returns Promise with component metadata
  */
 async function getComponentMetadata(componentName: string): Promise<any> {
     try {
-        const response = await githubRaw.get(`/${REGISTRY_PATH}/registry-ui.ts`);
-        const registryContent = response.data;
-        
-        // Parse component metadata using a more robust approach
-        const componentRegex = new RegExp(`{[^}]*name:\\s*["']${componentName}["'][^}]*}`, 'gs');
-        const match = registryContent.match(componentRegex);
-        
-        if (!match) {
-            return null;
-        }
-        
-        const componentData = match[0];
-        
-        // Extract metadata
-        const nameMatch = componentData.match(/name:\s*["']([^"']+)["']/);
-        const typeMatch = componentData.match(/type:\s*["']([^"']+)["']/);
-        const dependenciesMatch = componentData.match(/dependencies:\s*\[([^\]]*)\]/s);
-        const registryDepsMatch = componentData.match(/registryDependencies:\s*\[([^\]]*)\]/s);
+        // Try to get package.json from the component directory
+        const packageJsonPath = `${HELM_PATH}/${componentName.toLowerCase()}/package.json`;
+        const response = await githubRaw.get(`/${packageJsonPath}`);
+        const packageData = JSON.parse(response.data);
         
         return {
-            name: nameMatch?.[1] || componentName,
-            type: typeMatch?.[1] || 'registry:ui',
-            dependencies: dependenciesMatch?.[1] 
-                ? dependenciesMatch[1].split(',').map((dep: string) => dep.trim().replace(/["']/g, ''))
-                : [],
-            registryDependencies: registryDepsMatch?.[1]
-                ? registryDepsMatch[1].split(',').map((dep: string) => dep.trim().replace(/["']/g, ''))
-                : [],
+            name: packageData.name || componentName,
+            version: packageData.version || '0.0.0',
+            description: packageData.description || `Spartan NG ${componentName} component`,
+            type: 'spartan:helm',
+            dependencies: packageData.dependencies ? Object.keys(packageData.dependencies) : [],
+            peerDependencies: packageData.peerDependencies ? Object.keys(packageData.peerDependencies) : [],
+            framework: 'angular',
+            library: 'spartan-ng'
         };
     } catch (error) {
-        logError(`Error getting metadata for ${componentName}`, error);
-        return null;
+        // Fallback metadata if package.json is not available
+        logWarning(`Could not get package.json for ${componentName}, using fallback metadata`);
+        return {
+            name: componentName,
+            version: 'unknown',
+            description: `Spartan NG ${componentName} component`,
+            type: 'spartan:helm',
+            dependencies: [],
+            peerDependencies: ['@angular/core', '@angular/common'],
+            framework: 'angular',
+            library: 'spartan-ng'
+        };
     }
 }
 
@@ -232,7 +247,7 @@ async function getComponentMetadata(componentName: string): Promise<any> {
 async function buildDirectoryTree(
     owner: string = REPO_OWNER,
     repo: string = REPO_NAME,
-    path: string = NEW_YORK_V4_PATH,
+    path: string = HELM_PATH,
     branch: string = REPO_BRANCH
 ): Promise<any> {
     try {
@@ -343,36 +358,45 @@ async function buildDirectoryTree(
 }
 
 /**
- * Provides a basic directory structure for v4 registry without API calls
+ * Provides a basic directory structure for spartan helm library without API calls
  * This is used as a fallback when API rate limits are hit
  */
-function getBasicV4Structure(): any {
+function getBasicHelmStructure(): any {
     return {
-        path: NEW_YORK_V4_PATH,
+        path: HELM_PATH,
         type: 'directory',
         note: 'Basic structure provided due to API limitations',
+        description: 'Spartan NG Helm component library',
         children: {
-            'ui': {
-                path: `${NEW_YORK_V4_PATH}/ui`,
+            'accordion': {
+                path: `${HELM_PATH}/accordion`,
                 type: 'directory',
-                description: 'Contains all v4 UI components',
-                note: 'Component files (.tsx) are located here'
+                description: 'Accordion component for collapsible content'
             },
-            'examples': {
-                path: `${NEW_YORK_V4_PATH}/examples`,
-                type: 'directory', 
-                description: 'Contains component demo examples',
-                note: 'Demo files showing component usage'
-            },
-            'hooks': {
-                path: `${NEW_YORK_V4_PATH}/hooks`,
+            'alert': {
+                path: `${HELM_PATH}/alert`,
                 type: 'directory',
-                description: 'Contains custom React hooks'
+                description: 'Alert component for notifications'
             },
-            'lib': {
-                path: `${NEW_YORK_V4_PATH}/lib`,
+            'button': {
+                path: `${HELM_PATH}/button`,
                 type: 'directory',
-                description: 'Contains utility libraries and functions'
+                description: 'Button component for user interactions'
+            },
+            'card': {
+                path: `${HELM_PATH}/card`,
+                type: 'directory',
+                description: 'Card component for content containers'
+            },
+            'dialog': {
+                path: `${HELM_PATH}/dialog`,
+                type: 'directory',
+                description: 'Dialog component for modal interactions'
+            },
+            'input': {
+                path: `${HELM_PATH}/input`,
+                type: 'directory',
+                description: 'Input component for form fields'
             }
         }
     };
@@ -503,16 +527,16 @@ function generateComplexBlockUsage(blockName: string, structure: any[]): string 
 async function buildDirectoryTreeWithFallback(
     owner: string = REPO_OWNER,
     repo: string = REPO_NAME,
-    path: string = NEW_YORK_V4_PATH,
+    path: string = HELM_PATH,
     branch: string = REPO_BRANCH
 ): Promise<any> {
     try {
         return await buildDirectoryTree(owner, repo, path, branch);
     } catch (error: any) {
-        // If it's a rate limit error and we're asking for the default v4 path, provide fallback
-        if (error.message && error.message.includes('rate limit') && path === NEW_YORK_V4_PATH) {
-                    logWarning('Using fallback directory structure due to rate limit');
-        return getBasicV4Structure();
+        // If it's a rate limit error and we're asking for the default helm path, provide fallback
+        if (error.message && error.message.includes('rate limit') && path === HELM_PATH) {
+            logWarning('Using fallback directory structure due to rate limit');
+            return getBasicHelmStructure();
         }
         // Re-throw other errors
         throw error;
@@ -854,8 +878,6 @@ export const axios = {
         REPO_OWNER,
         REPO_NAME,
         REPO_BRANCH,
-        V4_BASE_PATH,
-        REGISTRY_PATH,
-        NEW_YORK_V4_PATH
+        HELM_PATH
     }
 }

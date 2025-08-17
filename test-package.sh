@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Test script for shadcn-ui-mcp-server
+# Test script for spartan-ng-mcp-server
 # This script validates that the package is ready for npm publishing
 
 set -e
 
-echo "🧪 Testing shadcn-ui-mcp-server package..."
+echo "🧪 Testing spartan-ng-mcp-server package..."
 
 # Test 1: Help command
 echo "✅ Testing --help flag..."
