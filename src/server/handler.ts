@@ -100,13 +100,13 @@ export const setupHandlers = (server: Server): void => {
         const registeredTools = [
           {
             name: 'get_component',
-            description: 'Get the source code for a specific shadcn/ui v4 component',
+            description: 'Get the source code for a specific Spartan NG Angular component',
             inputSchema: {
               type: 'object',
               properties: {
                 componentName: {
                   type: 'string',
-                  description: 'Name of the shadcn/ui component (e.g., "accordion", "button")',
+                  description: 'Name of the Spartan NG component (e.g., "accordion", "button")',
                 },
               },
               required: ['componentName'],
@@ -114,13 +114,13 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'get_component_demo',
-            description: 'Get demo code illustrating how a shadcn/ui v4 component should be used',
+            description: 'Get demo code illustrating how a Spartan NG Angular component should be used',
             inputSchema: {
               type: 'object',
               properties: {
                 componentName: {
                   type: 'string',
-                  description: 'Name of the shadcn/ui component (e.g., "accordion", "button")',
+                  description: 'Name of the Spartan NG component (e.g., "accordion", "button")',
                 },
               },
               required: ['componentName'],
@@ -128,7 +128,7 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'list_components',
-            description: 'Get all available shadcn/ui v4 components',
+            description: 'Get all available Spartan NG Angular components',
             inputSchema: {
               type: 'object',
               properties: {},
@@ -136,13 +136,13 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'get_component_metadata',
-            description: 'Get metadata for a specific shadcn/ui v4 component',
+            description: 'Get metadata for a specific Spartan NG Angular component',
             inputSchema: {
               type: 'object',
               properties: {
                 componentName: {
                   type: 'string',
-                  description: 'Name of the shadcn/ui component (e.g., "accordion", "button")',
+                  description: 'Name of the Spartan NG component (e.g., "accordion", "button")',
                 },
               },
               required: ['componentName'],
@@ -150,21 +150,21 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'get_directory_structure',
-            description: 'Get the directory structure of the shadcn-ui v4 repository',
+            description: 'Get the directory structure of the Spartan NG repository',
             inputSchema: {
               type: 'object',
               properties: {
                 path: {
                   type: 'string',
-                  description: 'Path within the repository (default: v4 registry)',
+                  description: 'Path within the repository (default: libs/helm)',
                 },
                 owner: {
                   type: 'string',
-                  description: 'Repository owner (default: "shadcn-ui")',
+                  description: 'Repository owner (default: "goetzrobin")',
                 },
                 repo: {
                   type: 'string',
-                  description: 'Repository name (default: "ui")',
+                  description: 'Repository name (default: "spartan")',
                 },
                 branch: {
                   type: 'string',
@@ -175,13 +175,13 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'get_block',
-            description: 'Get source code for a specific shadcn/ui v4 block (e.g., calendar-01, dashboard-01)',
+            description: 'Get source code for a specific Spartan NG Angular block (currently not supported)',
             inputSchema: {
               type: 'object',
               properties: {
                 blockName: {
                   type: 'string',
-                  description: 'Name of the block (e.g., "calendar-01", "dashboard-01", "login-02")',
+                  description: 'Name of the block (blocks are not currently supported in Spartan NG)',
                 },
                 includeComponents: {
                   type: 'boolean',
@@ -193,13 +193,13 @@ export const setupHandlers = (server: Server): void => {
           },
           {
             name: 'list_blocks',
-            description: 'Get all available shadcn/ui v4 blocks with categorization',
+            description: 'Get all available Spartan NG Angular blocks (currently not supported)',
             inputSchema: {
               type: 'object',
               properties: {
                 category: {
                   type: 'string',
-                  description: 'Filter by category (calendar, dashboard, login, sidebar, products)',
+                  description: 'Filter by category (blocks are not currently supported in Spartan NG)',
                 },
               },
             },

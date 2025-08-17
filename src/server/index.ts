@@ -11,7 +11,7 @@ import { createServer } from "../server/createServer.js"
 
 export async function start() {
   try {
-    logInfo("Starting Shadcn UI MCP Server...")
+    logInfo("Starting Spartan NG MCP Server...")
 
     const { githubApiKey } = parseArgs()
 
