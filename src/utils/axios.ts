@@ -355,26 +355,108 @@ async function getComponentMetadata(componentName: string): Promise<any> {
 }
 
 /**
+ * Component categorization mapping for Spartan NG structure
+ * Based on actual repository structure and UI/UX patterns
+ */
+const COMPONENT_CATEGORIES: Record<string, string[]> = {
+    form: [
+        'input', 'input-otp', 'checkbox', 'radio-group', 'select', 
+        'switch', 'slider', 'form-field', 'label', 'date-picker'
+    ],
+    layout: [
+        'card', 'sheet', 'separator', 'aspect-ratio', 'scroll-area'
+    ],
+    navigation: [
+        'breadcrumb', 'pagination', 'tabs', 'menu', 'command'
+    ],
+    feedback: [
+        'alert', 'progress', 'spinner', 'skeleton', 'sonner', 'tooltip'
+    ],
+    overlay: [
+        'dialog', 'alert-dialog', 'popover', 'hover-card'
+    ],
+    display: [
+        'avatar', 'badge', 'button', 'typography', 'table', 'calendar', 
+        'carousel', 'accordion', 'icon', 'toggle', 'toggle-group'
+    ]
+};
+
+/**
+ * Get all available component categories
+ * @returns Array of available categories
+ */
+function getAvailableCategories(): string[] {
+    return Object.keys(COMPONENT_CATEGORIES);
+}
+
+/**
+ * Get components for a specific category
+ * @param category Category name
+ * @returns Array of component names in the category
+ */
+function getComponentsByCategory(category: string): string[] {
+    return COMPONENT_CATEGORIES[category] || [];
+}
+
+/**
  * Determine component category based on component name
  * @param componentName Name of the component
  * @returns Component category
  */
 function getCategoryFromComponentName(componentName: string): string {
-    const formComponents = ['input', 'checkbox', 'radio-group', 'select', 'switch', 'slider', 'form-field', 'label'];
-    const layoutComponents = ['card', 'sheet', 'separator', 'aspect-ratio', 'scroll-area'];
-    const navigationComponents = ['breadcrumb', 'pagination', 'tabs', 'menu'];
-    const feedbackComponents = ['alert', 'progress', 'spinner', 'skeleton', 'sonner', 'tooltip'];
-    const overlayComponents = ['dialog', 'alert-dialog', 'popover', 'hover-card'];
-    const displayComponents = ['avatar', 'badge', 'button', 'typography', 'table', 'calendar', 'carousel'];
-    
-    if (formComponents.includes(componentName)) return 'form';
-    if (layoutComponents.includes(componentName)) return 'layout';
-    if (navigationComponents.includes(componentName)) return 'navigation';
-    if (feedbackComponents.includes(componentName)) return 'feedback';
-    if (overlayComponents.includes(componentName)) return 'overlay';
-    if (displayComponents.includes(componentName)) return 'display';
-    
+    for (const [category, components] of Object.entries(COMPONENT_CATEGORIES)) {
+        if (components.includes(componentName)) {
+            return category;
+        }
+    }
     return 'other';
+}
+
+/**
+ * Fetch all available components with categorization information
+ * @param categoryFilter Optional category to filter by
+ * @returns Promise with categorized component list
+ */
+async function getAvailableComponentsWithCategories(categoryFilter?: string): Promise<{
+    components: Array<{ name: string; category: string; displayName: string }>;
+    categories: string[];
+    totalCount: number;
+}> {
+    try {
+        const allComponents = await getAvailableComponents();
+        const categories = getAvailableCategories();
+        
+        // Map components with their categories
+        const componentsWithCategories = allComponents.map(componentName => ({
+            name: componentName,
+            category: getCategoryFromComponentName(componentName),
+            displayName: componentName.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ')
+        }));
+        
+        // Filter by category if specified
+        const filteredComponents = categoryFilter 
+            ? componentsWithCategories.filter(comp => comp.category === categoryFilter)
+            : componentsWithCategories;
+        
+        // Sort components by category, then by name
+        const sortedComponents = filteredComponents.sort((a, b) => {
+            if (a.category !== b.category) {
+                return a.category.localeCompare(b.category);
+            }
+            return a.name.localeCompare(b.name);
+        });
+        
+        return {
+            components: sortedComponents,
+            categories,
+            totalCount: sortedComponents.length
+        };
+    } catch (error) {
+        logError('Error fetching categorized components', error);
+        throw error;
+    }
 }
 
 /**
@@ -610,7 +692,11 @@ export const axios = {
     getComponentSource,
     getComponentDemo,
     getAvailableComponents,
+    getAvailableComponentsWithCategories,
     getComponentMetadata,
+    getAvailableCategories,
+    getComponentsByCategory,
+    getCategoryFromComponentName,
     setGitHubApiKey,
     getGitHubRateLimit,
     // Path constants for easy access

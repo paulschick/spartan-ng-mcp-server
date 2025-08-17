@@ -1,17 +1,30 @@
 import { getAxiosImplementation } from '../../utils/framework.js';
 import { logError } from '../../utils/logger.js';
 
-export async function handleListComponents() {
+export async function handleListComponents(args?: { category?: string; includeCategories?: boolean }) {
   try {
     const axios = await getAxiosImplementation();
-    const components = await axios.getAvailableComponents();
+    
+    // Use new categorized listing function
+    const result = await axios.getAvailableComponentsWithCategories(args?.category);
+    
+    // Format response based on whether categories are requested
+    const response = args?.includeCategories === false 
+      ? {
+          components: result.components.map(comp => comp.name).sort(),
+          total: result.totalCount
+        }
+      : {
+          components: result.components,
+          categories: result.categories,
+          total: result.totalCount,
+          ...(args?.category && { filteredBy: args.category })
+        };
+    
     return {
       content: [{ 
         type: "text", 
-        text: JSON.stringify({ 
-          components: components.sort(),
-          total: components.length 
-        }, null, 2) 
+        text: JSON.stringify(response, null, 2) 
       }]
     };
   } catch (error) {
@@ -20,4 +33,19 @@ export async function handleListComponents() {
   }
 }
 
-export const schema = {}; 
+export const schema = {
+  type: "object",
+  properties: {
+    category: {
+      type: "string",
+      description: "Filter components by category (form, layout, navigation, feedback, overlay, display)",
+      enum: ["form", "layout", "navigation", "feedback", "overlay", "display"]
+    },
+    includeCategories: {
+      type: "boolean", 
+      description: "Include category information in response (default: true)",
+      default: true
+    }
+  },
+  additionalProperties: false
+}; 
