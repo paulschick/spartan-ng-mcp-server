@@ -14,8 +14,8 @@ export async function handleGetDirectoryStructure({
 }) {
   try {
     const axios = await getAxiosImplementation();
-    // Get the default path based on available properties
-    const defaultPath = 'BLOCKS' in axios.paths ? axios.paths.BLOCKS : axios.paths.NEW_YORK_V4_PATH;
+    // Get the default path for Spartan NG components
+    const defaultPath = axios.paths.HELM_PATH;
     
     const directoryTree = await axios.buildDirectoryTree(
       owner || axios.paths.REPO_OWNER,
@@ -30,23 +30,23 @@ export async function handleGetDirectoryStructure({
       }]
     };
   } catch (error) {
-    logError('Failed to get directory structure', error);
-    throw new Error(`Failed to get directory structure: ${error instanceof Error ? error.message : String(error)}`);
+    logError('Failed to get Spartan NG repository directory structure', error);
+    throw new Error(`Failed to get Spartan NG repository directory structure: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
 export const schema = {
   path: {
     type: 'string',
-    description: 'Path within the repository (default: v4 registry)'
+    description: 'Path within the Spartan NG repository (default: libs/helm/)'
   },
   owner: {
     type: 'string',
-    description: 'Repository owner (default: "shadcn-ui")'
+    description: 'Repository owner (default: "goetzrobin")'
   },
   repo: {
     type: 'string',
-    description: 'Repository name (default: "ui")'
+    description: 'Repository name (default: "spartan")'
   },
   branch: {
     type: 'string',

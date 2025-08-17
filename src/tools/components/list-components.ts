@@ -15,8 +15,8 @@ export async function handleListComponents() {
       }]
     };
   } catch (error) {
-    logError('Failed to list components', error);
-    throw new Error(`Failed to list components: ${error instanceof Error ? error.message : String(error)}`);
+    logError('Failed to list Spartan NG components', error);
+    throw new Error(`Failed to list Spartan NG components: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

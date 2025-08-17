@@ -177,3 +177,57 @@ export class Cache {
 
 // Export a singleton instance
 export const cache = Cache.getInstance();
+
+/**
+ * Cache key utilities for Spartan NG MCP server
+ */
+export class CacheKeys {
+  /**
+   * Generate cache key for component list
+   */
+  static componentList(): string {
+    return 'spartan:components:list';
+  }
+
+  /**
+   * Generate cache key for component source
+   */
+  static componentSource(componentName: string): string {
+    return `spartan:component:${componentName}:source`;
+  }
+
+  /**
+   * Generate cache key for component demo/story
+   */
+  static componentDemo(componentName: string): string {
+    return `spartan:component:${componentName}:demo`;
+  }
+
+  /**
+   * Generate cache key for component metadata
+   */
+  static componentMetadata(componentName: string): string {
+    return `spartan:component:${componentName}:metadata`;
+  }
+
+  /**
+   * Generate cache key for directory tree
+   */
+  static directoryTree(path: string = 'libs/helm'): string {
+    return `spartan:directory:${path.replace(/\//g, ':')}`;
+  }
+
+  /**
+   * Generate cache key for component categories
+   */
+  static componentCategories(): string {
+    return 'spartan:components:categories';
+  }
+
+  /**
+   * Clear all spartan-related cache entries
+   */
+  static clearSpartanCache(): number {
+    return cache.deleteByPrefix('spartan:');
+  }
+}

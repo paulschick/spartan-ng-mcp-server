@@ -15,15 +15,15 @@ export async function handleGetBlock({
       content: [{ type: "text", text: JSON.stringify(blockData, null, 2) }]
     };
   } catch (error) {
-    logError(`Failed to get block "${blockName}"`, error);
-    throw new Error(`Failed to get block "${blockName}": ${error instanceof Error ? error.message : String(error)}`);
+    logError(`Failed to get Spartan NG component block "${blockName}"`, error);
+    throw new Error(`Failed to get Spartan NG component block "${blockName}": ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
 export const schema = {
   blockName: {
     type: 'string',
-    description: 'Name of the block (e.g., "calendar-01", "dashboard-01", "login-02")'
+    description: 'Name of the Spartan NG component block (blocks are not available in Spartan NG)'
   },
   includeComponents: {
     type: 'boolean',

@@ -1,11 +1,11 @@
 {
-  "name": "@jpisnice/shadcn-ui-mcp-server",
+  "name": "spartan-ng-mcp-server",
   "version": "1.0.3",
-  "description": "A Model Context Protocol (MCP) server for shadcn/ui components, providing AI assistants with access to component source code, demos, blocks, and metadata.",
+  "description": "A Model Context Protocol (MCP) server for Spartan NG Angular components, providing AI assistants with access to component source code, demos, and metadata.",
   "type": "module",
   "main": "./build/index.js",
   "bin": {
-    "shadcn-mcp": "./build/index.js"
+    "spartan-ng-mcp": "./build/index.js"
   },
   "files": [
     "build/**/*",
@@ -24,10 +24,10 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "shadcn",
-    "shadcn-ui",
+    "spartan-ng",
+    "spartan",
+    "angular",
     "ui-components",
-    "react",
     "typescript",
     "ai-tools",
     "claude",
@@ -37,10 +37,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jpisnice/shadcn-ui-mcp-server.git"
+    "url": "git+https://github.com/your-org/spartan-ng-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/Jpisnice/shadcn-ui-mcp-server/issues"
+    "url": "https://github.com/your-org/spartan-ng-mcp-server/issues"
   },
   "engines": {
     "node": ">=18.0.0"

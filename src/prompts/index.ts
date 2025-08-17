@@ -1,4 +1,3 @@
-import { getFramework } from "../utils/framework.js"
 import {
   getOptimizationInstructions,
   getPageTypeSpecificInstructions,
@@ -9,10 +8,10 @@ import {
  * Each prompt must have a name, description, and arguments if parameters are needed
  */
 export const prompts = {
-  "build-shadcn-page": {
-    name: "build-shadcn-page",
+  "build-spartan-page": {
+    name: "build-spartan-page",
     description:
-      "Generate a complete shadcn/ui page using v4 components and blocks",
+      "Generate a complete Angular page using Spartan NG components",
     arguments: [
       {
         name: "pageType",
@@ -38,7 +37,7 @@ export const prompts = {
   "create-dashboard": {
     name: "create-dashboard",
     description:
-      "Create a comprehensive dashboard using shadcn/ui v4 blocks and components",
+      "Create a comprehensive Angular dashboard using Spartan NG components",
     arguments: [
       {
         name: "dashboardType",
@@ -60,7 +59,7 @@ export const prompts = {
   "create-auth-flow": {
     name: "create-auth-flow",
     description:
-      "Generate authentication pages using shadcn/ui v4 login blocks",
+      "Generate Angular authentication pages using Spartan NG components",
     arguments: [
       {
         name: "authType",
@@ -79,10 +78,10 @@ export const prompts = {
       },
     ],
   },
-  "optimize-shadcn-component": {
-    name: "optimize-shadcn-component",
+  "optimize-spartan-component": {
+    name: "optimize-spartan-component",
     description:
-      "Optimize or enhance existing shadcn/ui components with best practices",
+      "Optimize or enhance existing Spartan NG Angular components with best practices",
     arguments: [
       {
         name: "component",
@@ -102,7 +101,7 @@ export const prompts = {
   },
   "create-data-table": {
     name: "create-data-table",
-    description: "Create advanced data tables with shadcn/ui components",
+    description: "Create advanced data tables with Spartan NG Angular components",
     arguments: [
       {
         name: "dataType",
@@ -128,7 +127,7 @@ export const prompts = {
  * Each handler generates the actual prompt content with the provided parameters
  */
 export const promptHandlers = {
-  "build-shadcn-page": ({
+  "build-spartan-page": ({
     pageType,
     features = "",
     layout = "sidebar",
@@ -139,52 +138,52 @@ export const promptHandlers = {
     layout?: string
     style?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: `Create a complete ${pageType} page using shadcn/ui v4 components and blocks for ${framework}. 
+            text: `Create a complete ${pageType} page using Spartan NG Angular components. 
 
 REQUIREMENTS:
-- Framework: ${framework}
+- Framework: Angular
 - Page Type: ${pageType}
 - Features: ${features || "Standard features for this page type"}
 - Layout: ${layout}
 - Design Style: ${style}
 
 INSTRUCTIONS:
-1. Use the MCP tools to explore available v4 blocks for this page type:
-   - Use 'list_blocks' to see available categories
-   - Use 'get_block' to fetch specific block implementations
+1. Use the MCP tools to explore available Spartan NG components:
+   - Use 'list_components' to see available components
+   - Use 'get_component' to fetch specific component implementations
 
 2. Build the page following these principles:
-   - Use shadcn/ui v4 components and blocks as building blocks
+   - Use Spartan NG Angular components as building blocks
    - Ensure responsive design with Tailwind CSS classes
-   - Implement proper TypeScript types
-   - Follow ${framework} best practices and conventions
+   - Implement proper TypeScript types and interfaces
+   - Follow Angular best practices and conventions
    - Include proper accessibility attributes
+   - Use Angular standalone components where appropriate
 
 3. For ${pageType} pages specifically:
    ${getPageTypeSpecificInstructions(pageType)}
 
 4. Code Structure:
-   - Create a main page component using ${framework} patterns
-   - Use sub-components for complex sections
-   - Include proper imports from shadcn/ui registry
-   - Add necessary state management with ${framework} best practices
-   - Include proper error handling
+   - Create a main page component using Angular patterns
+   - Use child components for complex sections
+   - Include proper imports from @spartan-ng/ui-*-helm packages
+   - Add necessary state management with Angular signals or services
+   - Include proper error handling with Angular error boundaries
 
 5. Styling Guidelines:
    - Use consistent spacing and typography
    - Implement ${style} design principles
    - Ensure dark/light mode compatibility
-   - Use shadcn/ui design tokens
+   - Use Tailwind CSS design tokens
+   - Follow Spartan NG design system
 
-Please provide complete, production-ready ${framework} code with proper imports and TypeScript types.`,
+Please provide complete, production-ready Angular code with proper imports, TypeScript types, and component architecture.`,
           },
         },
       ],
@@ -200,60 +199,59 @@ Please provide complete, production-ready ${framework} code with proper imports 
     widgets?: string
     navigation?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: `Create a comprehensive ${dashboardType} dashboard using shadcn/ui v4 blocks and components for ${framework}.
+            text: `Create a comprehensive ${dashboardType} dashboard using Spartan NG Angular components.
 
 REQUIREMENTS:
-- Framework: ${framework}
+- Framework: Angular
 - Dashboard Type: ${dashboardType}
 - Widgets: ${widgets}
 - Navigation: ${navigation}
 
 INSTRUCTIONS:
-1. First, explore available dashboard blocks:
-   - Use 'list_blocks' with category="dashboard" to see available dashboard blocks
-   - Use 'get_block' to examine dashboard-01 and other dashboard implementations
-   - Study the structure and component usage
+1. First, explore available Spartan NG components:
+   - Use 'list_components' to see available components
+   - Use 'get_component' to examine specific component implementations
+   - Study the structure and usage patterns
 
 2. Dashboard Structure:
-   - Implement ${navigation} navigation using appropriate shadcn/ui components
-   - Create a responsive grid layout for widgets
+   - Implement ${navigation} navigation using appropriate Spartan NG components
+   - Create a responsive grid layout for widgets using Angular Flex Layout or CSS Grid
    - Include proper header with user menu and notifications
-   - Add breadcrumb navigation
+   - Add breadcrumb navigation using Angular Router
 
 3. Widgets to Include:
    ${widgets
      .split(",")
-     .map((widget) => `- ${widget.trim()} with real-time data simulation`)
+     .map((widget) => `- ${widget.trim()} with real-time data simulation using Angular services`)
      .join("\n   ")}
 
 4. Key Features:
    - Responsive design that works on mobile, tablet, and desktop
-   - Interactive charts using a charting library compatible with shadcn/ui
-   - Data tables with sorting, filtering, and pagination
-   - Modal dialogs for detailed views
+   - Interactive charts using a charting library compatible with Angular
+   - Data tables with sorting, filtering, and pagination using Angular CDK Table
+   - Modal dialogs for detailed views using Spartan NG dialog components
    - Toast notifications for user feedback
 
 5. Data Management:
    - Create mock data structures for ${dashboardType}
-   - Implement state management with ${framework} best practices
+   - Implement state management with Angular signals or NgRx
    - Add loading states and error handling
-   - Include data refresh functionality
+   - Include data refresh functionality with Angular HttpClient
 
 6. Accessibility:
    - Proper ARIA labels and roles
    - Keyboard navigation support
    - Screen reader compatibility
    - Color contrast compliance
+   - Angular CDK a11y utilities
 
-Provide complete ${framework} code with all necessary imports, types, and implementations.`,
+Provide complete Angular code with all necessary imports, types, and implementations using Spartan NG components.`,
           },
         },
       ],
@@ -269,32 +267,30 @@ Provide complete ${framework} code with all necessary imports, types, and implem
     providers?: string
     features?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: `Create a complete ${authType} authentication flow using shadcn/ui v4 login blocks and components for ${framework}.
+            text: `Create a complete ${authType} authentication flow using Spartan NG Angular components.
 
 REQUIREMENTS:
-- Framework: ${framework}
+- Framework: Angular
 - Auth Type: ${authType}
 - Providers: ${providers}
 - Features: ${features}
 
 INSTRUCTIONS:
-1. Explore login blocks first:
-   - Use 'list_blocks' with category="login" to see available login blocks
-   - Use 'get_block' to examine login-01, login-02, etc. implementations
-   - Study different authentication patterns and layouts
+1. Explore available Spartan NG components:
+   - Use 'list_components' to see available components
+   - Use 'get_component' to examine form and input components
+   - Study authentication patterns suitable for Angular
 
 2. Authentication Components:
-   - Form validation using ${framework} best practices
-   - Input components with proper error states
-   - Loading states during authentication
+   - Form validation using Angular reactive forms
+   - Input components with proper error states using Spartan NG form controls
+   - Loading states during authentication with Angular signals
    - Success/error feedback with toast notifications
 
 3. Providers Implementation:
@@ -302,46 +298,53 @@ INSTRUCTIONS:
      .split(",")
      .map(
        (provider) =>
-         `- ${provider.trim()}: Implement ${provider.trim()} authentication UI`
+         `- ${provider.trim()}: Implement ${provider.trim()} authentication UI with Angular services`
      )
      .join("\n   ")}
 
 4. Security Features:
-   - Form validation with proper error messages
-   - Password strength indicator (if applicable)
-   - CSRF protection considerations
-   - Secure form submission patterns
+   - Form validation with proper error messages using Angular validators
+   - Password strength indicator using Angular custom validators
+   - CSRF protection with Angular HttpInterceptors
+   - Secure form submission patterns with Angular HttpClient
 
 5. UX Considerations:
-   - Smooth transitions between auth states
-   - Clear error messaging
-   - Progressive enhancement
-   - Mobile-friendly design
-   - Remember me functionality (if applicable)
+   - Smooth transitions between auth states using Angular animations
+   - Clear error messaging with Spartan NG alert components
+   - Progressive enhancement with Angular Universal compatibility
+   - Mobile-friendly design with responsive Tailwind CSS
+   - Remember me functionality with Angular local storage services
 
 6. Form Features:
    ${features
      .split(",")
      .map(
        (feature) =>
-         `- ${feature.trim()}: Implement ${feature.trim()} functionality`
+         `- ${feature.trim()}: Implement ${feature.trim()} functionality with Angular forms`
      )
      .join("\n   ")}
 
 7. Layout Options:
-   - Choose appropriate layout from available login blocks
-   - Center-aligned forms with proper spacing
-   - Background images or gradients (optional)
-   - Responsive design for all screen sizes
+   - Use Spartan NG layout components for proper spacing
+   - Center-aligned forms with responsive design
+   - Background images or gradients using Tailwind CSS
+   - Responsive design for all screen sizes with Angular Flex Layout
 
-Provide complete ${framework} authentication flow code with proper TypeScript types, validation, and error handling.`,
+8. Angular-Specific Implementation:
+   - Use standalone components for better tree-shaking
+   - Implement proper TypeScript interfaces for auth data
+   - Use Angular Guards for route protection
+   - Implement proper error handling with try-catch patterns
+   - Use Angular services for authentication state management
+
+Provide complete Angular authentication flow code with proper TypeScript types, validation, and error handling using Spartan NG components.`,
           },
         },
       ],
     }
   },
 
-  "optimize-shadcn-component": ({
+  "optimize-spartan-component": ({
     component,
     optimization = "performance",
     useCase = "general",
@@ -350,18 +353,16 @@ Provide complete ${framework} authentication flow code with proper TypeScript ty
     optimization?: string
     useCase?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: `Optimize the ${component} shadcn/ui component for ${optimization} and ${useCase} use case in ${framework}.
+            text: `Optimize the ${component} Spartan NG Angular component for ${optimization} and ${useCase} use case.
 
 REQUIREMENTS:
-- Framework: ${framework}
+- Framework: Angular
 - Component: ${component}
 - Optimization Focus: ${optimization}
 - Use Case: ${useCase}
@@ -373,7 +374,7 @@ INSTRUCTIONS:
    - Use 'get_component_metadata' to understand dependencies
 
 2. Optimization Strategy for ${optimization}:
-   ${getOptimizationInstructions(optimization, framework)}
+   ${getOptimizationInstructions(optimization, "angular")}
 
 3. Use Case Specific Enhancements for ${useCase}:
    - Analyze how ${component} is typically used in ${useCase} scenarios
@@ -381,23 +382,25 @@ INSTRUCTIONS:
    - Suggest improvements for better developer experience
 
 4. Implementation:
-   - Provide optimized component code
+   - Provide optimized Angular component code
    - Include performance benchmarks or considerations
    - Add proper TypeScript types and interfaces
    - Include usage examples demonstrating improvements
+   - Use Angular OnPush change detection strategy where appropriate
 
 5. Best Practices:
-   - Follow ${framework} performance best practices
-   - Implement ${framework} optimization patterns where needed
+   - Follow Angular performance best practices
+   - Implement Angular optimization patterns (OnPush, trackBy, etc.)
    - Ensure backward compatibility
-   - Add comprehensive prop validation
+   - Add comprehensive input validation
+   - Use Angular signals where appropriate
 
 6. Testing Considerations:
-   - Suggest test cases for the optimized component
-   - Include accessibility testing recommendations
-   - Performance testing guidelines
+   - Suggest test cases for the optimized component using Angular Testing utilities
+   - Include accessibility testing recommendations with Angular CDK
+   - Performance testing guidelines with Angular DevTools
 
-Provide the optimized ${framework} component code with detailed explanations of improvements made.`,
+Provide the optimized Angular component code with detailed explanations of improvements made using Spartan NG patterns.`,
           },
         },
       ],
@@ -413,18 +416,16 @@ Provide the optimized ${framework} component code with detailed explanations of 
     features?: string
     actions?: string
   }) => {
-    const framework = getFramework()
-
     return {
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: `Create an advanced data table for ${dataType} using shadcn/ui v4 components in ${framework}.
+            text: `Create an advanced data table for ${dataType} using Spartan NG Angular components.
 
 REQUIREMENTS:
-- Framework: ${framework}
+- Framework: Angular
 - Data Type: ${dataType}
 - Features: ${features}
 - Actions: ${actions}
@@ -433,13 +434,14 @@ INSTRUCTIONS:
 1. Explore table components:
    - Use 'get_component' for 'table' to see the base table implementation
    - Use 'get_component_demo' for 'table' to see usage examples
-   - Look for any existing table blocks in the blocks directory
+   - Use Angular CDK Table for advanced functionality
 
 2. Table Structure:
-   - Create a reusable DataTable component using ${framework} patterns
+   - Create a reusable DataTable component using Angular patterns
    - Define proper TypeScript interfaces for ${dataType} data
    - Implement column definitions with proper typing
-   - Add responsive table design
+   - Add responsive table design with Angular Flex Layout
+   - Use standalone components where appropriate
 
 3. Features Implementation:
    ${features
@@ -447,11 +449,11 @@ INSTRUCTIONS:
      .map((feature) => {
        const featureInstructions: Record<string, string> = {
          sorting:
-           "- Column sorting (ascending/descending) with visual indicators",
-         filtering: "- Global search and column-specific filters",
-         pagination: "- Page-based navigation with configurable page sizes",
-         search: "- Real-time search across all columns",
-         selection: "- Row selection with bulk actions support",
+           "- Column sorting (ascending/descending) with visual indicators using Angular CDK",
+         filtering: "- Global search and column-specific filters with Angular reactive forms",
+         pagination: "- Page-based navigation with configurable page sizes using Angular CDK Paginator",
+         search: "- Real-time search across all columns with debouncing",
+         selection: "- Row selection with bulk actions support using Angular CDK Selection",
        }
        return (
          featureInstructions[feature.trim()] ||
@@ -465,31 +467,33 @@ INSTRUCTIONS:
      .split(",")
      .map(
        (action) =>
-         `- ${action.trim()}: Implement ${action.trim()} action with proper confirmation dialogs`
+         `- ${action.trim()}: Implement ${action.trim()} action with proper confirmation dialogs using Spartan NG dialog components`
      )
      .join("\n   ")}
 
 5. Data Management:
    - Create mock data for ${dataType}
-   - Implement data fetching patterns using ${framework} best practices
+   - Implement data fetching patterns using Angular HttpClient
    - Add loading states and error handling
    - Add optimistic updates for actions
-   - Include data validation
+   - Include data validation with Angular reactive forms
+   - Use Angular signals for reactive state management
 
 6. UI/UX Features:
    - Loading skeletons during data fetch
    - Empty states when no data is available
    - Error states with retry functionality
    - Responsive design for mobile devices
-   - Keyboard navigation support
+   - Keyboard navigation support with Angular CDK a11y
+   - Virtual scrolling for large datasets using Angular CDK
 
 7. Advanced Features:
-   - Column resizing and reordering
-   - Export functionality (CSV, JSON)
-   - Bulk operations
-   - Virtual scrolling for large datasets (if needed)
+   - Column resizing and reordering with Angular CDK Drag & Drop
+   - Export functionality (CSV, JSON) using Angular services
+   - Bulk operations with confirmation dialogs
+   - Accessibility features with ARIA labels and screen reader support
 
-Provide complete ${framework} data table implementation with proper TypeScript types, mock data, and usage examples.`,
+Provide complete Angular data table implementation with proper TypeScript types, mock data, and usage examples using Spartan NG components.`,
           },
         },
       ],

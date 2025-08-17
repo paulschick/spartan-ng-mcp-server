@@ -1,18 +1,14 @@
-// filepath: /home/janardhan/Documents/code/Ai/mcp-starter-typescript/src/utils/api.ts
 /**
- * Legacy API utilities for shadcn/ui components
+ * API utilities for Spartan NG Angular components
  * 
- * NOTE: This file contains legacy functions that were used for scraping shadcn.com
- * The MCP server now uses direct GitHub v4 registry access in tools.ts
- * 
- * This file is kept for potential future extensions but all functions are 
- * deprecated in favor of the v4 registry approach.
+ * This file contains type definitions and schemas for Spartan NG components
+ * from the goetzrobin/spartan repository.
  */
 
 import { z } from 'zod';
 
-// Zod Schemas for type definitions (still useful for type safety)
-const ComponentPropSchema = z.object({
+// Zod Schemas for Angular component type definitions
+const AngularInputSchema = z.object({
   name: z.string(),
   type: z.string(),
   description: z.string(),
@@ -21,45 +17,61 @@ const ComponentPropSchema = z.object({
   example: z.string().optional()
 });
 
-const ComponentExampleSchema = z.object({
-  title: z.string(),
-  code: z.string(),
-  url: z.string().optional(),
-  description: z.string().optional()
+const AngularOutputSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  description: z.string(),
+  example: z.string().optional()
 });
 
-const ComponentInfoSchema = z.object({
+const ComponentStorySchema = z.object({
+  title: z.string(),
+  code: z.string(),
+  description: z.string().optional(),
+  args: z.record(z.any()).optional()
+});
+
+const SpartanComponentInfoSchema = z.object({
   name: z.string(),
   description: z.string(),
-  url: z.string().optional(),
-  props: z.array(ComponentPropSchema).optional(),
-  examples: z.array(ComponentExampleSchema).optional(),
+  selector: z.string().optional(),
+  inputs: z.array(AngularInputSchema).optional(),
+  outputs: z.array(AngularOutputSchema).optional(),
+  stories: z.array(ComponentStorySchema).optional(),
   source: z.string().optional(),
   installation: z.string().optional(),
   sourceUrl: z.string().optional(),
-  usage: z.string().optional()
+  usage: z.string().optional(),
+  framework: z.literal('angular'),
+  library: z.literal('spartan-ng'),
+  version: z.string().optional(),
+  dependencies: z.array(z.string()).optional(),
+  peerDependencies: z.array(z.string()).optional()
 });
 
-const ThemeSchema = z.object({
+const ComponentMetadataSchema = z.object({
   name: z.string(),
+  version: z.string(),
   description: z.string(),
-  url: z.string().optional(),
-  preview: z.string().optional(),
-  author: z.string().optional()
-});
-
-const BlockSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  url: z.string().optional(),
-  preview: z.string().optional(),
-  code: z.string().optional(),
-  dependencies: z.array(z.string()).optional()
+  type: z.literal('spartan:helm'),
+  dependencies: z.array(z.string()),
+  peerDependencies: z.array(z.string()),
+  framework: z.literal('angular'),
+  library: z.literal('spartan-ng')
 });
 
 // Export TypeScript types from Zod schemas
-export type ComponentProp = z.infer<typeof ComponentPropSchema>;
-export type ComponentExample = z.infer<typeof ComponentExampleSchema>;
-export type ComponentInfo = z.infer<typeof ComponentInfoSchema>;
-export type Theme = z.infer<typeof ThemeSchema>;
-export type Block = z.infer<typeof BlockSchema>;
+export type AngularInput = z.infer<typeof AngularInputSchema>;
+export type AngularOutput = z.infer<typeof AngularOutputSchema>;
+export type ComponentStory = z.infer<typeof ComponentStorySchema>;
+export type SpartanComponentInfo = z.infer<typeof SpartanComponentInfoSchema>;
+export type ComponentMetadata = z.infer<typeof ComponentMetadataSchema>;
+
+// Export schemas for validation
+export {
+  AngularInputSchema,
+  AngularOutputSchema,
+  ComponentStorySchema,
+  SpartanComponentInfoSchema,
+  ComponentMetadataSchema
+};
