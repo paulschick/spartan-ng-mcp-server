@@ -4,45 +4,45 @@
 export function getPageTypeSpecificInstructions(pageType: string): string {
   const instructions = {
     dashboard: `
-   - Use dashboard blocks as foundation (dashboard-01)
-   - Include metrics cards, charts, and data tables
-   - Implement sidebar navigation with proper menu structure
-   - Add header with user profile and notifications
-   - Create responsive grid layout for widgets`,
+   - Use Spartan NG components for dashboard foundation (card, table, chart)
+   - Include metrics cards using card and badge components
+   - Implement sidebar navigation with menu and button components
+   - Add header with avatar and notification components
+   - Create responsive grid layout using Angular Flex Layout or CSS Grid`,
 
     login: `
-   - Use login blocks as reference (login-01 through login-05)
-   - Implement form validation with clear error messages
-   - Add social authentication options if specified
-   - Include forgot password and sign-up links
-   - Ensure mobile-responsive design`,
+   - Use Spartan NG form components (input, button, form-field)
+   - Implement form validation with Angular reactive forms
+   - Add social authentication using button variants
+   - Include navigation links with proper routing
+   - Ensure mobile-responsive design with responsive utilities`,
 
     calendar: `
-   - Use calendar blocks (calendar-01 through calendar-32)
-   - Implement different calendar views (month, week, day)
-   - Add event creation and management
-   - Include date navigation and filtering
-   - Support event categories and colors`,
+   - Use Spartan NG calendar component as foundation
+   - Implement different views using tabs and button-group components
+   - Add event creation using dialog and form components
+   - Include date navigation with pagination component
+   - Support event categories using badge and color schemes`,
 
     sidebar: `
-   - Use sidebar blocks as foundation (sidebar-01 through sidebar-16)
-   - Implement collapsible navigation
-   - Add proper menu hierarchy
-   - Include search functionality
-   - Support both light and dark themes`,
+   - Use Spartan NG menu and sheet components for navigation
+   - Implement collapsible behavior with toggle components
+   - Add proper menu hierarchy using nested menu items
+   - Include search functionality with input and command components
+   - Support theme switching with toggle and select components`,
 
     products: `
-   - Use products blocks as reference (products-01)
-   - Create product grid/list views
-   - Implement filtering and sorting
-   - Add product details modal or page
-   - Include shopping cart functionality if needed`,
+   - Use Spartan NG card components for product display
+   - Create grid/list views using responsive layout utilities
+   - Implement filtering with select and checkbox components
+   - Add product details using dialog or sheet components
+   - Include shopping cart with badge and button components`,
 
     custom: `
-   - Analyze requirements and choose appropriate blocks
-   - Combine multiple block patterns as needed
-   - Focus on component reusability
-   - Ensure consistent design patterns`,
+   - Analyze requirements and choose appropriate Spartan NG components
+   - Combine multiple component patterns as needed
+   - Focus on component reusability and composition
+   - Ensure consistent design patterns following Spartan NG conventions`,
   }
 
   return (

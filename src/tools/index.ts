@@ -3,25 +3,19 @@ import { handleGetComponentDemo } from './components/get-component-demo.js';
 import { handleListComponents } from './components/list-components.js';
 import { handleGetComponentMetadata } from './components/get-component-metadata.js';
 import { handleGetDirectoryStructure } from './repository/get-directory-structure.js';
-import { handleGetBlock } from './blocks/get-block.js';
-import { handleListBlocks } from './blocks/list-blocks.js';
 
 import { schema as getComponentSchema } from './components/get-component.js';
 import { schema as getComponentDemoSchema } from './components/get-component-demo.js';
 import { schema as listComponentsSchema } from './components/list-components.js';
 import { schema as getComponentMetadataSchema } from './components/get-component-metadata.js';
 import { schema as getDirectoryStructureSchema } from './repository/get-directory-structure.js';
-import { schema as getBlockSchema } from './blocks/get-block.js';
-import { schema as listBlocksSchema } from './blocks/list-blocks.js';
 
 export const toolHandlers = {
   get_component: handleGetComponent,
   get_component_demo: handleGetComponentDemo,
   list_components: handleListComponents,
   get_component_metadata: handleGetComponentMetadata,
-  get_directory_structure: handleGetDirectoryStructure,
-  get_block: handleGetBlock,
-  list_blocks: handleListBlocks
+  get_directory_structure: handleGetDirectoryStructure
 };
 
 export const toolSchemas = {
@@ -29,9 +23,7 @@ export const toolSchemas = {
   get_component_demo: getComponentDemoSchema,
   list_components: listComponentsSchema,
   get_component_metadata: getComponentMetadataSchema,
-  get_directory_structure: getDirectoryStructureSchema,
-  get_block: getBlockSchema,
-  list_blocks: listBlocksSchema
+  get_directory_structure: getDirectoryStructureSchema
 };
 
 export const tools = {
@@ -78,21 +70,4 @@ export const tools = {
       properties: getDirectoryStructureSchema
     }
   },
-  'get_block': {
-    name: 'get_block',
-    description: 'Get source code for a specific Spartan NG Angular block (currently not supported)',
-    inputSchema: {
-      type: 'object',
-      properties: getBlockSchema,
-      required: ['blockName']
-    }
-  },
-  'list_blocks': {
-    name: 'list_blocks',
-    description: 'Get all available Spartan NG Angular blocks (currently not supported)',
-    inputSchema: {
-      type: 'object',
-      properties: listBlocksSchema
-    }
-  }
 }; 

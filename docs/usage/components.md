@@ -1,45 +1,29 @@
 # Component Examples
 
-Learn how to work with individual shadcn/ui components using the MCP Server.
+Learn how to work with individual Spartan NG components using the MCP Server.
 
 ## 🎯 Getting Component Source Code
 
 ### Basic Component Request
 
 ```
-"Show me the shadcn/ui button component"
+"Show me the Spartan NG button component"
 ```
 
-This will return the complete TypeScript source code for the button component, including:
-- Component implementation
+This will return the complete Angular component source code, including:
+- Component TypeScript implementation
+- HTML template
+- SCSS styles
 - TypeScript interfaces
 - Import statements
 - Dependencies
 
-### Framework-Specific Components
-
-#### React (Default)
+### Angular Component Files
 
 ```
-"Show me the React button component with TypeScript"
-"Get the React card component source code"
-"Show me the React dialog component"
-```
-
-#### Svelte
-
-```
-"Show me the Svelte button component"
-"Get the Svelte card component source code"
-"Show me the Svelte dialog component"
-```
-
-#### Vue
-
-```
-"Show me the Vue button component"
-"Get the Vue card component source code"
-"Show me the Vue dialog component"
+"Show me the button component with TypeScript"
+"Get the card component source code"
+"Show me the dialog component implementation"
 ```
 
 ## 📋 Getting Component Demos
@@ -47,7 +31,7 @@ This will return the complete TypeScript source code for the button component, i
 ### Usage Examples
 
 ```
-"Show me how to use the shadcn/ui card component"
+"Show me how to use the Spartan NG card component"
 "Get the button component demo"
 "Show me examples of the dialog component"
 ```
@@ -65,7 +49,7 @@ This will return the complete TypeScript source code for the button component, i
 ### Dependencies and Requirements
 
 ```
-"What are the dependencies for the shadcn/ui dialog component?"
+"What are the dependencies for the Spartan NG dialog component?"
 "Show me the requirements for the card component"
 "What does the button component need to work?"
 ```
@@ -73,7 +57,7 @@ This will return the complete TypeScript source code for the button component, i
 ### Component Information
 
 ```
-"Tell me about the shadcn/ui button component"
+"Tell me about the Spartan NG button component"
 "What is the card component used for?"
 "Describe the dialog component features"
 ```
@@ -83,17 +67,9 @@ This will return the complete TypeScript source code for the button component, i
 ### All Components
 
 ```
-"List all available shadcn/ui components"
+"List all available Spartan NG components"
 "Show me all components in the library"
 "What components are available?"
-```
-
-### Framework-Specific Lists
-
-```
-"List all React components"
-"Show me all Svelte components"
-"List all Vue components"
 ```
 
 ## 🎨 Component Categories
@@ -135,14 +111,6 @@ This will return the complete TypeScript source code for the button component, i
 "Get the dialog component with required imports"
 ```
 
-### Component Comparison
-
-```
-"Compare the button component between React and Svelte"
-"Show me the differences between React and Vue card components"
-"Compare dialog implementations across frameworks"
-```
-
 ### Customization Examples
 
 ```
@@ -156,7 +124,7 @@ This will return the complete TypeScript source code for the button component, i
 ### Building a Form
 
 ```
-"Help me build a login form using shadcn/ui components"
+"Help me build a login form using Spartan NG components"
 "Show me the form components I need for a contact form"
 "Get the input and button components for a search form"
 ```
@@ -179,7 +147,5 @@ This will return the complete TypeScript source code for the button component, i
 
 ## 🔗 Next Steps
 
-- [Block Examples](blocks.md) - Working with complete blocks
-- [Framework Comparison](framework-comparison.md) - Cross-framework examples
 - [Real-world Projects](real-world-projects.md) - Complete application examples
 - [Best Practices](best-practices.md) - Tips for optimal usage 

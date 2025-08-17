@@ -34,10 +34,6 @@ import { logError, logInfo } from '../utils/logger.js';
 const componentSchema = { componentName: z.string() };
 const searchSchema = { query: z.string() };
 const themesSchema = { query: z.string().optional() };
-const blocksSchema = { 
-  query: z.string().optional(), 
-  category: z.string().optional() 
-};
 
 /**
  * Wrapper function to handle requests with simple error handling
@@ -169,37 +165,6 @@ export const setupHandlers = (server: Server): void => {
                 branch: {
                   type: 'string',
                   description: 'Branch name (default: "main")',
-                },
-              },
-            },
-          },
-          {
-            name: 'get_block',
-            description: 'Get source code for a specific Spartan NG Angular block (currently not supported)',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                blockName: {
-                  type: 'string',
-                  description: 'Name of the block (blocks are not currently supported in Spartan NG)',
-                },
-                includeComponents: {
-                  type: 'boolean',
-                  description: 'Whether to include component files for complex blocks (default: true)',
-                },
-              },
-              required: ['blockName'],
-            },
-          },
-          {
-            name: 'list_blocks',
-            description: 'Get all available Spartan NG Angular blocks (currently not supported)',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                category: {
-                  type: 'string',
-                  description: 'Filter by category (blocks are not currently supported in Spartan NG)',
                 },
               },
             },
@@ -338,8 +303,6 @@ function getToolSchema(toolName: string): z.ZodType | undefined {
       case 'get_themes':
         return z.object(themesSchema);
         
-      case 'get_blocks':
-        return z.object(blocksSchema);
         
       default:
         return undefined;

@@ -38,10 +38,3 @@ export interface Theme {
   url?: string;
 }
 
-export interface Block {
-  name: string;
-  description: string;
-  url?: string;
-  preview?: string;
-  // Note: Blocks are not currently supported in Spartan NG
-}

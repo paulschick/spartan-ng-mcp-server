@@ -1,6 +1,6 @@
 # Continue.dev Integration
 
-Integrate the shadcn/ui MCP Server with Continue.dev for enhanced AI-powered development.
+Integrate the Spartan NG MCP Server with Continue.dev for enhanced AI-powered Angular development.
 
 ## 🚀 Quick Setup
 
@@ -17,10 +17,10 @@ Integrate the shadcn/ui MCP Server with Continue.dev for enhanced AI-powered dev
 
 ```json
 {
-  "name": "shadcn-ui",
+  "name": "spartan-ng",
   "command": "npx",
   "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
+    "spartan-ng-mcp-server",
     "--github-api-key",
     "ghp_your_token_here"
   ]
@@ -34,99 +34,10 @@ Add to your Continue.dev configuration file:
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
       "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-## 🎨 Framework-Specific Configurations
-
-### React (Default)
-
-```json
-{
-  "name": "shadcn-ui",
-  "command": "npx",
-  "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
-    "--github-api-key",
-    "ghp_your_token_here"
-  ]
-}
-```
-
-### Svelte
-
-```json
-{
-  "name": "shadcn-ui-svelte",
-  "command": "npx",
-  "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
-    "--framework",
-    "svelte",
-    "--github-api-key",
-    "ghp_your_token_here"
-  ]
-}
-```
-
-### Vue
-
-```json
-{
-  "name": "shadcn-ui-vue",
-  "command": "npx",
-  "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
-    "--framework",
-    "vue",
-    "--github-api-key",
-    "ghp_your_token_here"
-  ]
-}
-```
-
-## 🔧 Multiple Framework Setup
-
-Configure multiple frameworks for comparison:
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-react": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "react",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-svelte": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "svelte",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-vue": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "vue",
+        "spartan-ng-mcp-server",
         "--github-api-key",
         "ghp_your_token_here"
       ]
@@ -140,33 +51,25 @@ Configure multiple frameworks for comparison:
 ### Component Development
 
 ```
-"Show me the shadcn/ui button component source code"
+"Show me the Spartan NG button component source code"
 "Get the card component with usage examples"
-"List all available shadcn/ui components"
+"List all available Spartan NG components"
 ```
 
-### Block Implementation
+### Angular Development
 
 ```
-"Get the dashboard-01 block implementation"
-"Show me the calendar-01 block with all components"
-"List all available shadcn/ui blocks"
+"Generate a login form using Spartan NG components"
+"Create an Angular dashboard with Spartan NG"
+"Show me how to use the dialog component in Angular"
 ```
 
 ### Code Generation
 
 ```
-"Generate a login form using shadcn/ui components"
-"Create a dashboard with shadcn/ui blocks"
-"Show me how to use the dialog component"
-```
-
-### Framework Comparison
-
-```
-"Compare the button component between React and Svelte"
-"Show me the Vue version of the card component"
-"Get the React form component with TypeScript"
+"Generate an Angular form using Spartan NG components"
+"Show me the button component demo for Angular"
+"Create a card layout with Spartan NG"
 ```
 
 ## 🔍 Environment Variable Setup
@@ -175,9 +78,9 @@ Use environment variables for better security:
 
 ```json
 {
-  "name": "shadcn-ui",
+  "name": "spartan-ng",
   "command": "npx",
-  "args": ["@jpisnice/shadcn-ui-mcp-server"],
+  "args": ["spartan-ng-mcp-server"],
   "env": {
     "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
   }
@@ -190,7 +93,7 @@ Use environment variables for better security:
 
 1. **Verify server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Check configuration syntax**:

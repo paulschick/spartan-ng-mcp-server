@@ -1,6 +1,6 @@
 # VS Code Integration
 
-Integrate the shadcn/ui MCP Server with VS Code for seamless component access.
+Integrate the Spartan NG MCP Server with VS Code for seamless Angular component access.
 
 ## 🚀 Quick Setup
 
@@ -20,10 +20,10 @@ Integrate the shadcn/ui MCP Server with VS Code for seamless component access.
 {
   "continue.server": {
     "mcpServers": {
-      "shadcn-ui": {
+      "spartan-ng": {
         "command": "npx",
         "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
+          "spartan-ng-mcp-server",
           "--github-api-key",
           "ghp_your_token_here"
         ]
@@ -45,117 +45,11 @@ Integrate the shadcn/ui MCP Server with VS Code for seamless component access.
 ```json
 {
   "claude.mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "args": ["spartan-ng-mcp-server"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
-      }
-    }
-  }
-}
-```
-
-## 🎨 Framework-Specific Configurations
-
-### React (Default)
-
-```json
-{
-  "continue.server": {
-    "mcpServers": {
-      "shadcn-ui": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
-      }
-    }
-  }
-}
-```
-
-### Svelte
-
-```json
-{
-  "continue.server": {
-    "mcpServers": {
-      "shadcn-ui-svelte": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--framework",
-          "svelte",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
-      }
-    }
-  }
-}
-```
-
-### Vue
-
-```json
-{
-  "continue.server": {
-    "mcpServers": {
-      "shadcn-ui-vue": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--framework",
-          "vue",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
-      }
-    }
-  }
-}
-```
-
-## 🔧 Multiple Framework Setup
-
-You can configure multiple frameworks simultaneously:
-
-```json
-{
-  "continue.server": {
-    "mcpServers": {
-      "shadcn-ui-react": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--framework",
-          "react",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
-      },
-      "shadcn-ui-svelte": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--framework",
-          "svelte",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
-      },
-      "shadcn-ui-vue": {
-        "command": "npx",
-        "args": [
-          "@jpisnice/shadcn-ui-mcp-server",
-          "--framework",
-          "vue",
-          "--github-api-key",
-          "ghp_your_token_here"
-        ]
       }
     }
   }
@@ -169,9 +63,9 @@ You can configure multiple frameworks simultaneously:
 1. **Open Continue Chat** (Ctrl+Shift+L)
 2. **Ask for components**:
    ```
-   "Show me the shadcn/ui button component"
-   "Get the dashboard-01 block"
-   "List all available components"
+   "Show me the Spartan NG button component"
+   "Get the card component implementation"
+   "List all available Spartan NG components"
    ```
 
 ### With Claude Extension
@@ -179,9 +73,9 @@ You can configure multiple frameworks simultaneously:
 1. **Open Claude Chat** (Ctrl+Shift+L)
 2. **Request components**:
    ```
-   "Show me the React button component source code"
-   "Get the Svelte card component demo"
-   "Compare Vue and React button implementations"
+   "Show me the Spartan NG button component source code"
+   "Get the dialog component with TypeScript"
+   "Show me the card component demo"
    ```
 
 ## 🔍 Environment Variable Setup
@@ -192,9 +86,9 @@ Instead of hardcoding your token, use environment variables:
 {
   "continue.server": {
     "mcpServers": {
-      "shadcn-ui": {
+      "spartan-ng": {
         "command": "npx",
-        "args": ["@jpisnice/shadcn-ui-mcp-server"],
+        "args": ["spartan-ng-mcp-server"],
         "env": {
           "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
         }
@@ -210,7 +104,7 @@ Instead of hardcoding your token, use environment variables:
 
 1. **Check if server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Verify configuration syntax**:

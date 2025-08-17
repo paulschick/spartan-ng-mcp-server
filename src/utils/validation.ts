@@ -23,13 +23,6 @@ export const validationSchemas = {
       .description('Optional query string')
   }),
 
-  // Block schemas
-  blockQuery: Joi.object({
-    query: Joi.string().optional().max(500)
-      .description('Optional search query'),
-    category: Joi.string().optional().max(100)
-      .description('Optional category filter')
-  }),
 
   // Directory structure schemas
   directoryStructure: Joi.object({
@@ -43,13 +36,6 @@ export const validationSchemas = {
       .description('Branch name')
   }),
 
-  // Block schemas
-  blockRequest: Joi.object({
-    blockName: Joi.string().required().min(1).max(200)
-      .description('Name of the block'),
-    includeComponents: Joi.boolean().optional()
-      .description('Whether to include component files')
-  }),
 
   // Resource schemas
   resourceRequest: Joi.object({
@@ -127,13 +113,9 @@ export function getValidationSchema(method: string): Joi.ObjectSchema | undefine
     // Search methods
     'search_components': validationSchemas.searchQuery,
     'get_themes': validationSchemas.optionalQuery,
-    'get_blocks': validationSchemas.blockQuery,
     
     // Directory methods
     'get_directory_structure': validationSchemas.directoryStructure,
-    
-    // Block methods
-    'get_block': validationSchemas.blockRequest,
     
     // Resource methods
     'read_resource': validationSchemas.resourceRequest,

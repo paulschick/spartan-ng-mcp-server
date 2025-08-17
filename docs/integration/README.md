@@ -1,6 +1,6 @@
 # Integration
 
-Connect the shadcn/ui MCP Server to your favorite editor or AI tool.
+Connect the Spartan NG MCP Server to your favorite editor or AI tool.
 
 ## 🔌 Available Integrations
 
@@ -34,9 +34,9 @@ See [Claude Desktop Integration](claude-desktop.md) for details.
 
 - **Ask for component source code** directly in your editor
 - **Get component demos** and usage examples
-- **Retrieve complete blocks** (dashboards, forms, etc.)
 - **Explore repository structure** without leaving your tool
-- **Compare framework implementations** (React, Svelte, Vue)
+- **Get component metadata** and dependencies
+- **Build Angular applications** with Spartan NG components
 
 ## 🔧 Common Configuration
 
@@ -46,22 +46,7 @@ Most integrations use this basic configuration:
 {
   "command": "npx",
   "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
-    "--github-api-key",
-    "ghp_your_token_here"
-  ]
-}
-```
-
-For different frameworks:
-
-```json
-{
-  "command": "npx",
-  "args": [
-    "@jpisnice/shadcn-ui-mcp-server",
-    "--framework",
-    "svelte",
+    "spartan-ng-mcp-server",
     "--github-api-key",
     "ghp_your_token_here"
   ]
@@ -74,7 +59,7 @@ For different frameworks:
 
 1. **Verify server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Check configuration syntax** - JSON must be valid
@@ -87,7 +72,6 @@ For different frameworks:
 
 - **Command not found**: Ensure `npx` is available
 - **Rate limit errors**: Add GitHub token
-- **Framework issues**: Verify framework parameter
 - **Permission errors**: Check file permissions
 
 ## 🔗 Next Steps

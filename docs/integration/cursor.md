@@ -1,6 +1,6 @@
 # Cursor Integration
 
-Integrate the shadcn/ui MCP Server with Cursor for AI-powered component development.
+Integrate the Spartan NG MCP Server with Cursor for AI-powered Angular component development.
 
 ## 🚀 Quick Setup
 
@@ -15,10 +15,10 @@ Integrate the shadcn/ui MCP Server with Cursor for AI-powered component developm
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
       "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
+        "spartan-ng-mcp-server",
         "--github-api-key",
         "ghp_your_token_here"
       ]
@@ -34,110 +34,12 @@ Create a `.cursorrules` file in your project root:
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "args": ["spartan-ng-mcp-server"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
       }
-    }
-  }
-}
-```
-
-## 🎨 Framework-Specific Configurations
-
-### React (Default)
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-### Svelte
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-svelte": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "svelte",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-### Vue
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-vue": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "vue",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    }
-  }
-}
-```
-
-## 🔧 Multiple Framework Setup
-
-Configure multiple frameworks for comparison:
-
-```json
-{
-  "mcpServers": {
-    "shadcn-ui-react": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "react",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-svelte": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "svelte",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
-    },
-    "shadcn-ui-vue": {
-      "command": "npx",
-      "args": [
-        "@jpisnice/shadcn-ui-mcp-server",
-        "--framework",
-        "vue",
-        "--github-api-key",
-        "ghp_your_token_here"
-      ]
     }
   }
 }
@@ -150,26 +52,26 @@ Configure multiple frameworks for comparison:
 1. **Open Cursor Chat** (Cmd/Ctrl + L)
 2. **Ask for components**:
    ```
-   "Show me the shadcn/ui button component"
-   "Get the dashboard-01 block implementation"
-   "List all available components"
+   "Show me the Spartan NG button component"
+   "Get the card component implementation"
+   "List all available Spartan NG components"
    ```
 
 ### Code Generation
 
 1. **Use Cursor's AI features**:
    ```
-   "Generate a login form using shadcn/ui components"
-   "Create a dashboard with shadcn/ui blocks"
-   "Show me how to use the card component"
+   "Generate a login form using Spartan NG components"
+   "Create an Angular dashboard with Spartan NG"
+   "Show me how to use the dialog component in Angular"
    ```
 
-### Framework Comparison
+### Angular Development
 
 ```
-"Compare the button component implementations between React and Svelte"
-"Show me the Vue version of the card component"
-"Get the React dialog component with TypeScript"
+"Show me the Angular button component with TypeScript"
+"Get the card component demo for Angular"
+"Generate an Angular form using Spartan NG components"
 ```
 
 ## 🔍 Environment Variable Setup
@@ -179,9 +81,9 @@ Use environment variables for better security:
 ```json
 {
   "mcpServers": {
-    "shadcn-ui": {
+    "spartan-ng": {
       "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "args": ["spartan-ng-mcp-server"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
       }
@@ -196,7 +98,7 @@ Use environment variables for better security:
 
 1. **Verify server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Check configuration syntax**:

@@ -149,39 +149,5 @@ export const capabilities = {
         },
       },
     },
-    get_block: {
-      description:
-        "Get source code for a specific Spartan NG Angular block (currently not supported)",
-      inputSchema: {
-        type: "object",
-        properties: {
-          blockName: {
-            type: "string",
-            description:
-              'Name of the block (blocks are not currently supported in Spartan NG)',
-          },
-          includeComponents: {
-            type: "boolean",
-            description:
-              "Whether to include component files for complex blocks (default: true)",
-          },
-        },
-        required: ["blockName"],
-      },
-    },
-    list_blocks: {
-      description:
-        "Get all available Spartan NG Angular blocks (currently not supported)",
-      inputSchema: {
-        type: "object",
-        properties: {
-          category: {
-            type: "string",
-            description:
-              "Filter by category (blocks are not currently supported in Spartan NG)",
-          },
-        },
-      },
-    },
   },
 }
