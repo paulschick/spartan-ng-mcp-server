@@ -402,124 +402,9 @@ function getBasicHelmStructure(): any {
     };
 }
 
-/**
- * Extract description from block code comments
- * @param code The source code to analyze
- * @returns Extracted description or null
- */
-function extractBlockDescription(code: string): string | null {
-    // Look for JSDoc comments or description comments
-    const descriptionRegex = /\/\*\*[\s\S]*?\*\/|\/\/\s*(.+)/;
-    const match = code.match(descriptionRegex);
-    if (match) {
-        // Clean up the comment
-        const description = match[0]
-            .replace(/\/\*\*|\*\/|\*|\/\//g, '')
-            .trim()
-            .split('\n')[0]
-            .trim();
-        return description.length > 0 ? description : null;
-    }
-    
-    // Look for component name as fallback
-    const componentRegex = /export\s+(?:default\s+)?function\s+(\w+)/;
-    const componentMatch = code.match(componentRegex);
-    if (componentMatch) {
-        return `${componentMatch[1]} - A reusable UI component`;
-    }
-    
-    return null;
-}
 
-/**
- * Extract dependencies from import statements
- * @param code The source code to analyze
- * @returns Array of dependency names
- */
-function extractDependencies(code: string): string[] {
-    const dependencies: string[] = [];
-    
-    // Match import statements
-    const importRegex = /import\s+.*?\s+from\s+['"]([@\w\/\-\.]+)['"]/g;
-    let match: RegExpExecArray | null;
-    
-    match = importRegex.exec(code);
-    while (match !== null) {
-        const dep: string = match[1];
-        if (!dep.startsWith('./') && !dep.startsWith('../') && !dep.startsWith('@/')) {
-            dependencies.push(dep);
-        }
-        match = importRegex.exec(code);
-    }
-    
-    return [...new Set(dependencies)]; // Remove duplicates
-}
 
-/**
- * Extract component usage from code
- * @param code The source code to analyze
- * @returns Array of component names used
- */
-function extractComponentUsage(code: string): string[] {
-    const components: string[] = [];
-    
-    // Extract from imports of components (assuming they start with capital letters)
-    const importRegex = /import\s+\{([^}]+)\}\s+from/g;
-    let match: RegExpExecArray | null;
-    
-    match = importRegex.exec(code);
-    while (match !== null) {
-        const imports = match[1].split(',').map(imp => imp.trim());
-        imports.forEach(imp => {
-            if (imp[0] && imp[0] === imp[0].toUpperCase()) {
-                components.push(imp);
-            }
-        });
-        match = importRegex.exec(code);
-    }
-    
-    // Also look for JSX components in the code
-    const jsxRegex = /<([A-Z]\w+)/g;
-    match = jsxRegex.exec(code);
-    while (match !== null) {
-        components.push(match[1]);
-        match = jsxRegex.exec(code);
-    }
-    
-    return [...new Set(components)]; // Remove duplicates
-}
 
-/**
- * Generate usage instructions for complex blocks
- * @param blockName Name of the block
- * @param structure Structure information
- * @returns Usage instructions string
- */
-function generateComplexBlockUsage(blockName: string, structure: any[]): string {
-    const hasComponents = structure.some(item => item.name === 'components');
-    
-    let usage = `To use the ${blockName} block:\n\n`;
-    usage += `1. Copy the main files to your project:\n`;
-    
-    structure.forEach(item => {
-        if (item.type === 'file') {
-            usage += `   - ${item.name}\n`;
-        } else if (item.type === 'directory' && item.name === 'components') {
-            usage += `   - components/ directory (${item.count} files)\n`;
-        }
-    });
-    
-    if (hasComponents) {
-        usage += `\n2. Copy the components to your components directory\n`;
-        usage += `3. Update import paths as needed\n`;
-        usage += `4. Ensure all dependencies are installed\n`;
-    } else {
-        usage += `\n2. Update import paths as needed\n`;
-        usage += `3. Ensure all dependencies are installed\n`;
-    }
-    
-    return usage;
-}
 
 /**
  * Enhanced buildDirectoryTree with fallback for rate limits
@@ -543,26 +428,7 @@ async function buildDirectoryTreeWithFallback(
     }
 }
 
-/**
- * Fetch block code from the v4 blocks directory
- * @param blockName Name of the block (e.g., "calendar-01", "dashboard-01")
- * @param includeComponents Whether to include component files for complex blocks
- * @returns Promise with block code and structure
- */
-async function getBlockCode(blockName: string, includeComponents: boolean = true): Promise<any> {
-    // Note: Block functionality not applicable to Spartan NG - throwing error
-    throw new Error("Block functionality is not supported for Spartan NG components. Use component discovery instead.");
-}
 
-/**
- * Get all available blocks with categorization
- * @param category Optional category filter
- * @returns Promise with categorized block list
- */
-async function getAvailableBlocks(category?: string): Promise<any> {
-    // Note: Block functionality not applicable to Spartan NG - throwing error  
-    throw new Error("Block functionality is not supported for Spartan NG components. Use component discovery instead.");
-}
 
 /**
  * Set or update GitHub API key for higher rate limits
@@ -604,8 +470,6 @@ export const axios = {
     getComponentDemo,
     getAvailableComponents,
     getComponentMetadata,
-    getBlockCode,
-    getAvailableBlocks,
     setGitHubApiKey,
     getGitHubRateLimit,
     // Path constants for easy access
