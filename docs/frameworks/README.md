@@ -1,99 +1,73 @@
-# Frameworks
+# Framework Support
 
-Framework-specific documentation for React, Svelte, and Vue implementations.
+Framework support documentation for the Spartan NG MCP Server.
 
-## 🎨 Supported Frameworks
+## 🅰️ Angular-Only Support
 
-## 📋 Framework Comparison
+This MCP server is specifically designed for Angular development using Spartan NG components.
+
+## 📋 Framework Details
 
 | Framework | Repository | Maintainer | File Extension | Description |
 |-----------|------------|------------|----------------|-------------|
-| **React** (default) | [shadcn/ui](https://ui.shadcn.com/) | [shadcn](https://github.com/shadcn) | `.tsx` | React components from shadcn/ui v4 |
-| **Svelte** | [shadcn-svelte](https://www.shadcn-svelte.com/) | [huntabyte](https://github.com/huntabyte) | `.svelte` | Svelte components from shadcn-svelte |
-| **Vue** | [shadcn-vue](https://www.shadcn-vue.com/) | [unovue](https://github.com/unovue) | `.vue` | Vue components from shadcn-vue |
+| **Angular** | [goetzrobin/spartan](https://www.spartan.ng/) | [goetzrobin](https://github.com/goetzrobin) | `.ts` | Angular components from Spartan NG |
 
-## 🚀 Quick Framework Selection
+## 🚀 Getting Started
 
-### React (Default)
+### Angular with Spartan NG
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server
+npx spartan-ng-mcp-server
 ```
 
-### Svelte
+### With GitHub Token
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
-### Vue
+## 🔧 Why Angular-Only?
+
+This server focuses exclusively on Angular to provide:
+
+- **Optimized Performance** - No framework switching overhead
+- **Angular-Specific Features** - Directive patterns, dependency injection
+- **TypeScript Integration** - Full type safety with Angular patterns
+- **Simplified Configuration** - No framework selection needed
+
+## 🎯 Angular Use Cases
+
+### Angular Applications
+- **Angular 16+ applications**
+- **TypeScript projects with strict mode**
+- **Modern Angular patterns with standalone components**
+- **Enterprise Angular applications**
+
+### Component Development
+- **Angular component libraries**
+- **Design system implementation**
+- **UI component learning and exploration**
+
+### Integration Patterns
+- **Angular CLI integration**
+- **Angular workspace development**
+- **Nx monorepo projects**
+
+## 🔍 Server Configuration
+
+The server automatically configures for Angular:
 
 ```bash
-npx @jpisnice/shadcn-ui-mcp-server --framework vue
-```
-
-## 🔄 Switching Between Frameworks
-
-### Command Line
-
-```bash
-# Switch to Svelte
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte
-
-# Switch to Vue
-npx @jpisnice/shadcn-ui-mcp-server --framework vue
-
-# Switch back to React
-npx @jpisnice/shadcn-ui-mcp-server --framework react
-```
-
-### Environment Variable
-
-```bash
-# Use Svelte
-export FRAMEWORK=svelte
-npx @jpisnice/shadcn-ui-mcp-server
-
-# Use Vue
-export FRAMEWORK=vue
-npx @jpisnice/shadcn-ui-mcp-server
-
-# Use React
-export FRAMEWORK=react
-npx @jpisnice/shadcn-ui-mcp-server
-```
-
-## 🎯 Framework-Specific Use Cases
-
-### React
-- **React/Next.js applications**
-- **TypeScript projects**
-- **Most common use case**
-- **Full shadcn/ui v4 compatibility**
-
-### Svelte
-- **Svelte/SvelteKit applications**
-- **Svelte component development**
-- **Learning Svelte with shadcn patterns**
-
-### Vue
-- **Vue/Nuxt applications**
-- **Vue component development**
-- **Learning Vue with shadcn patterns**
-
-## 🔍 Framework Detection
-
-The server logs which framework is being used:
-
-```bash
-INFO: Framework set to 'svelte' via command line argument
-INFO: MCP Server configured for SVELTE framework
-INFO: Repository: huntabyte/shadcn-svelte
-INFO: File extension: .svelte
+INFO: MCP Server starting...
+INFO: MCP Server configured for ANGULAR framework
+INFO: Repository: goetzrobin/spartan
+INFO: File extension: .ts
+INFO: MCP Server ready
 ```
 
 ## 🔗 Next Steps
 
-- [Configuration](../configuration/) - Framework configuration options
-- [Usage Examples](../usage/) - Framework-specific examples
-- [Integration](../integration/) - Editor and tool integrations 
+- [Configuration](../configuration/) - Server configuration options
+- [Usage Examples](../usage/) - Angular-specific examples
+- [Integration](../integration/) - Editor and tool integrations
+- [Getting Started](../getting-started/) - Quick start with Angular 

@@ -1,24 +1,19 @@
 # API Reference
 
-Complete reference for the shadcn/ui MCP Server tools and capabilities.
+Complete reference for the Spartan NG MCP Server tools and capabilities.
 
 ## 🛠️ Available Tools
 
 ### Component Tools
 
-- [get_component](get-component.md) - Get component source code
-- [get_component_demo](get-component-demo.md) - Get component usage examples
-- [list_components](list-components.md) - List all available components
-- [get_component_metadata](get-component-metadata.md) - Get component dependencies and info
-
-### Block Tools
-
-- [get_block](get-block.md) - Get complete block implementations
-- [list_blocks](list-blocks.md) - List all available blocks with categories
+- [spartan_get_component](get-component.md) - Get component source code
+- [spartan_get_component_demo](get-component-demo.md) - Get component usage examples
+- [spartan_list_components](list-components.md) - List all available components
+- [spartan_get_component_metadata](get-component-metadata.md) - Get component dependencies and info
 
 ### Repository Tools
 
-- [get_directory_structure](get-directory-structure.md) - Explore repository structure
+- [spartan_get_directory_structure](get-directory-structure.md) - Explore repository structure
 
 ## 🔧 Tool Usage Examples
 
@@ -27,36 +22,26 @@ Complete reference for the shadcn/ui MCP Server tools and capabilities.
 ```typescript
 // Get button component source
 {
-  "tool": "get_component",
+  "tool": "spartan_get_component",
   "arguments": { "componentName": "button" }
 }
 
 // List all components
 {
-  "tool": "list_components",
+  "tool": "spartan_list_components",
   "arguments": {}
 }
 
 // Get component demo
 {
-  "tool": "get_component_demo",
+  "tool": "spartan_get_component_demo",
   "arguments": { "componentName": "card" }
 }
-```
 
-### Block Tools
-
-```typescript
-// Get dashboard block
+// Get component metadata
 {
-  "tool": "get_block",
-  "arguments": { "blockName": "dashboard-01" }
-}
-
-// List all blocks
-{
-  "tool": "list_blocks",
-  "arguments": {}
+  "tool": "spartan_get_component_metadata",
+  "arguments": { "componentName": "badge" }
 }
 ```
 
@@ -65,22 +50,31 @@ Complete reference for the shadcn/ui MCP Server tools and capabilities.
 ```typescript
 // Get directory structure
 {
-  "tool": "get_directory_structure",
-  "arguments": { "path": "components" }
+  "tool": "spartan_get_directory_structure",
+  "arguments": { "path": "libs/helm" }
 }
 ```
 
-## 🎨 Framework Support
+## 🅰️ Angular Support
 
-All tools support three frameworks:
-- **React** (default) - shadcn/ui v4
-- **Svelte** - shadcn-svelte
-- **Vue** - shadcn-vue
+This server provides Angular-specific tooling for:
+- **Spartan NG** - Angular UI primitives from [goetzrobin/spartan](https://github.com/goetzrobin/spartan)
+- **TypeScript** - Fully typed component interfaces and implementations
+- **Directive-based Components** - Modern Angular component patterns
+- **Standalone Components** - Angular standalone component support
+
+## 📋 Component Response Format
+
+All component tools return Angular-specific TypeScript code:
+- **File Extension**: `.ts` files with Angular decorators
+- **Import Patterns**: Spartan NG import structures
+- **Component Structure**: Angular directive and component patterns
+- **Styling**: CSS/SCSS with Angular-specific patterns
 
 ## 🔗 Next Steps
 
-- [get_component](get-component.md) - Component source code tool
-- [get_component_demo](get-component-demo.md) - Component demo tool
-- [list_components](list-components.md) - Component listing tool
-- [get_block](get-block.md) - Block implementation tool
-- [list_blocks](list-blocks.md) - Block listing tool 
+- [spartan_get_component](get-component.md) - Component source code tool
+- [spartan_get_component_demo](get-component-demo.md) - Component demo tool
+- [spartan_list_components](list-components.md) - Component listing tool
+- [spartan_get_component_metadata](get-component-metadata.md) - Component metadata tool
+- [spartan_get_directory_structure](get-directory-structure.md) - Repository structure tool

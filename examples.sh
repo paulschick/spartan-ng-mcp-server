@@ -62,4 +62,4 @@ echo ""
 
 echo "📚 For more information:"
 echo "   npx spartan-ng-mcp-server --help"
-echo "   https://github.com/your-org/spartan-ng-mcp-server"
+echo "   https://github.com/paulschick/spartan-ng-mcp-server"
