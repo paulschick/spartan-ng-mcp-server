@@ -54,9 +54,9 @@ DEBUG=* npx spartan-ng-mcp-server --github-api-key ghp_your_token
 
 ## 📞 Getting Help
 
-- 🐛 [Report Issues](https://github.com/your-org/spartan-ng-mcp-server/issues)
-- 💬 [Discussions](https://github.com/your-org/spartan-ng-mcp-server/discussions)
-- 📖 [Documentation](https://github.com/your-org/spartan-ng-mcp-server#readme)
+- 🐛 [Report Issues](https://github.com/paulschick/spartan-ng-mcp-server/issues)
+- 💬 [Discussions](https://github.com/paulschick/spartan-ng-mcp-server/discussions)
+- 📖 [Documentation](https://github.com/paulschick/spartan-ng-mcp-server#readme)
 
 ## 🔗 Next Steps
 

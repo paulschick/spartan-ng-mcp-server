@@ -165,4 +165,4 @@ Continue using your GitHub Personal Access Token for optimal performance.
 
 ---
 
-**Need help?** Open an issue in the [Spartan NG MCP Server repository](https://github.com/your-org/spartan-ng-mcp-server/issues).
+**Need help?** Open an issue in the [Spartan NG MCP Server repository](https://github.com/paulschick/spartan-ng-mcp-server/issues).

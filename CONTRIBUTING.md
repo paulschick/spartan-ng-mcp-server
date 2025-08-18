@@ -19,7 +19,7 @@ We welcome contributions of all kinds—bug reports, feature requests, code, tes
 ## How to Contribute
 
 ### 1. Reporting Issues
-- Use [GitHub Issues](https://github.com/your-org/spartan-ng-mcp-server/issues) for bugs, feature requests, or questions.
+- Use [GitHub Issues](https://github.com/paulschick/spartan-ng-mcp-server/issues) for bugs, feature requests, or questions.
 - Please include:
   - A clear, descriptive title
   - Steps to reproduce (for bugs)

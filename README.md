@@ -99,7 +99,7 @@ npm install -g spartan-ng-mcp-server
 npx spartan-ng-mcp-server
 
 # Development installation
-git clone https://github.com/your-org/spartan-ng-mcp-server
+git clone https://github.com/paulschick/spartan-ng-mcp-server
 cd spartan-ng-mcp-server
 npm install
 npm run build
@@ -112,7 +112,7 @@ npm start
 - 📂 [Spartan NG Repository](https://github.com/goetzrobin/spartan)
 - 🔧 [Model Context Protocol](https://spec.modelcontextprotocol.io/)
 - 🚀 [Angular Documentation](https://angular.dev/)
-- 💬 [Issues & Support](https://github.com/your-org/spartan-ng-mcp-server/issues)
+- 💬 [Issues & Support](https://github.com/paulschick/spartan-ng-mcp-server/issues)
 
 ## 📄 License
 
