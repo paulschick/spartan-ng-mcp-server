@@ -27,32 +27,37 @@
     "spartan-ng",
     "spartan",
     "angular",
+    "angular-components",
     "ui-components",
+    "design-system",
     "typescript",
     "ai-tools",
     "claude",
-    "copilot"
+    "copilot",
+    "component-library",
+    "angular-ui"
   ],
-  "author": "Janardhan Pollle",
+  "author": "Paul Schick",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/spartan-ng-mcp-server.git"
+    "url": "git+https://github.com/paulschick/spartan-ng-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/spartan-ng-mcp-server/issues"
+    "url": "https://github.com/paulschick/spartan-ng-mcp-server/issues"
   },
+  "homepage": "https://github.com/paulschick/spartan-ng-mcp-server#readme",
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.16.0",
-    "axios": "^1.8.4",
-    "zod": "^3.24.2",
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "axios": "^1.11.0",
+    "zod": "^3.25.76",
     "joi": "^17.13.3"
   },
   "devDependencies": {
-    "@types/node": "^22.10.5",
-    "typescript": "^5.7.2"
+    "@types/node": "^22.17.2",
+    "typescript": "^5.9.2"
   }
 }
