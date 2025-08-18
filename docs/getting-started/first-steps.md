@@ -1,20 +1,17 @@
 # First Steps
 
-Now that you have the shadcn/ui MCP Server installed, let's make your first component request!
+Now that you have the Spartan NG MCP Server installed, let's make your first component request!
 
 ## 🚀 Quick Test
 
 ### 1. Start the Server
 
 ```bash
-# Basic start (React framework)
-npx @jpisnice/shadcn-ui-mcp-server
+# Basic start (Angular/Spartan NG)
+npx spartan-ng-mcp-server
 
 # With GitHub token (recommended)
-npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
-
-# Different framework
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
 ### 2. Verify Server is Running
@@ -22,10 +19,9 @@ npx @jpisnice/shadcn-ui-mcp-server --framework svelte --github-api-key ghp_your_
 You should see output like:
 ```
 INFO: MCP Server starting...
-INFO: Framework set to 'react' via command line argument
-INFO: MCP Server configured for REACT framework
-INFO: Repository: shadcn-ui/ui
-INFO: File extension: .tsx
+INFO: MCP Server configured for ANGULAR framework
+INFO: Repository: goetzrobin/spartan
+INFO: File extension: .ts
 INFO: MCP Server ready
 ```
 
@@ -36,45 +32,25 @@ Once the server is running, you can ask your AI assistant to:
 ### Get a Component
 
 ```
-"Show me the source code for the shadcn/ui button component"
+"Show me the source code for the Spartan NG button component"
 ```
 
 ### List Available Components
 
 ```
-"List all available shadcn/ui components"
+"List all available Spartan NG components"
 ```
 
 ### Get Component Demo
 
 ```
-"Show me how to use the shadcn/ui card component"
+"Show me how to use the Spartan NG card component"
 ```
 
 ### Get Component Metadata
 
 ```
-"What are the dependencies for the shadcn/ui dialog component?"
-```
-
-## 🏗️ Working with Blocks
-
-### Get a Complete Block
-
-```
-"Get the dashboard-01 block implementation"
-```
-
-### List Available Blocks
-
-```
-"Show me all available shadcn/ui blocks"
-```
-
-### Get Block with Components
-
-```
-"Get the calendar-01 block with all its component files"
+"What are the dependencies for the Spartan NG dialog component?"
 ```
 
 ## 🔍 Exploring the Repository
@@ -82,34 +58,34 @@ Once the server is running, you can ask your AI assistant to:
 ### Browse Directory Structure
 
 ```
-"Show me the structure of the shadcn/ui repository"
+"Show me the structure of the Spartan NG repository"
 ```
 
 ### Explore Specific Paths
 
 ```
-"Show me the components directory structure"
+"Show me the libs/helm directory structure"
 ```
 
 ## 💡 Example Conversations
 
 ### Building a Login Form
 
-**You**: "Help me build a login form using shadcn/ui components"
+**You**: "Help me build a login form using Spartan NG components"
 
-**AI Assistant**: *Can now access all form-related components, their source code, and usage examples*
+**AI Assistant**: *Can now access all form-related components, their Angular source code, and usage examples*
 
 ### Creating a Dashboard
 
-**You**: "Create a dashboard using shadcn/ui components. Use the dashboard-01 block as a starting point"
+**You**: "Create a dashboard using Spartan NG components"
 
-**AI Assistant**: *Can retrieve the complete dashboard block and customize it for your needs*
+**AI Assistant**: *Can retrieve complete component implementations and customize them for your Angular needs*
 
-### Component Comparison
+### Angular Component Learning
 
-**You**: "Compare the button component implementations between React and Svelte"
+**You**: "Show me how Spartan NG components work with Angular directives"
 
-**AI Assistant**: *Can switch frameworks and show you both implementations*
+**AI Assistant**: *Can demonstrate Angular-specific patterns and directive usage*
 
 ## 🔧 Integration Examples
 
@@ -131,30 +107,30 @@ Once the server is running, you can ask your AI assistant to:
 2. **Use AI features** with shadcn/ui access
 3. **Generate code** with proper components
 
-## 🎨 Framework-Specific Examples
+## 🅰️ Angular-Specific Examples
 
-### React (Default)
-
-```
-"Show me the React button component with TypeScript"
-"Get the React card component demo"
-"List all React components available"
-```
-
-### Svelte
+### Component Source Code
 
 ```
-"Show me the Svelte button component"
-"Get the Svelte card component with usage examples"
-"Compare Svelte and React button implementations"
+"Show me the Angular button component with TypeScript"
+"Get the card component with Angular directives"
+"List all Spartan NG components with Angular patterns"
 ```
 
-### Vue
+### Directive Usage
 
 ```
-"Show me the Vue button component"
-"Get the Vue card component demo"
-"List all Vue components available"
+"Show me how to use hlmBtn directive"
+"Get examples of Spartan NG directive patterns"
+"Show me Angular component composition examples"
+```
+
+### TypeScript Integration
+
+```
+"Show me TypeScript interfaces for Spartan NG components"
+"Get strongly-typed component examples"
+"Show me Angular dependency injection patterns"
 ```
 
 ## 🔗 Next Steps
@@ -171,8 +147,8 @@ You'll know it's working when:
 - ✅ Server starts without errors
 - ✅ AI assistant can retrieve component source code
 - ✅ Component code includes proper imports and dependencies
-- ✅ Framework-specific syntax is correct
-- ✅ Blocks include all necessary component files
+- ✅ Angular-specific syntax is correct
+- ✅ TypeScript interfaces are included
 
 ## 🐛 Common First-Time Issues
 
@@ -188,17 +164,17 @@ npx --version
 ### Rate Limit Errors
 ```bash
 # Add GitHub token
-npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
 ### Component Not Found
 ```bash
 # Check available components first
-# Ask AI assistant: "List all available components"
+# Ask AI assistant: "List all available Spartan NG components"
 ```
 
-### Framework Issues
+### Server Configuration Issues
 ```bash
-# Verify framework selection
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte --help
+# Verify server configuration
+npx spartan-ng-mcp-server --help
 ``` 

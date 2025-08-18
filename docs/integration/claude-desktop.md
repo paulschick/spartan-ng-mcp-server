@@ -84,7 +84,7 @@ After editing your configuration file, restart Claude Desktop to load the MCP se
 
 1. **Verify server runs standalone**:
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 2. **Check configuration file location**:

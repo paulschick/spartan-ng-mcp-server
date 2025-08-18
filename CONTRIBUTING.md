@@ -1,4 +1,4 @@
-# Contributing to Shadcn UI MCP Server
+# Contributing to Spartan NG MCP Server
 
 Thank you for your interest in contributing! 🎉
 
@@ -19,7 +19,7 @@ We welcome contributions of all kinds—bug reports, feature requests, code, tes
 ## How to Contribute
 
 ### 1. Reporting Issues
-- Use [GitHub Issues](https://github.com/Jpisnice/shadcn-ui-mcp-server/issues) for bugs, feature requests, or questions.
+- Use [GitHub Issues](https://github.com/your-org/spartan-ng-mcp-server/issues) for bugs, feature requests, or questions.
 - Please include:
   - A clear, descriptive title
   - Steps to reproduce (for bugs)
@@ -61,7 +61,7 @@ We welcome contributions of all kinds—bug reports, feature requests, code, tes
    ```
 4. **Start the server locally**
    ```bash
-   npx @jpisnice/shadcn-ui-mcp-server --help
+   npx spartan-ng-mcp-server --help
    ```
 
 ---
@@ -72,6 +72,8 @@ We welcome contributions of all kinds—bug reports, feature requests, code, tes
 - Keep functions and files focused and modular.
 - Add or update tests for new features or bug fixes.
 - Use TypeScript best practices.
+- Follow Angular style guide conventions for component-related documentation.
+- Use Angular-specific patterns and imports for all examples.
 
 ---
 

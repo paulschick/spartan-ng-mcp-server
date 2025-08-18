@@ -1,12 +1,12 @@
 # Troubleshooting
 
-Common issues and solutions for the shadcn/ui MCP Server.
+Common issues and solutions for the Spartan NG MCP Server.
 
 ## 🐛 Common Issues
 
 - [Installation Issues](installation-issues.md) - Problems with installation and setup
 - [Rate Limit Issues](rate-limit-issues.md) - GitHub API rate limiting problems
-- [Framework Issues](framework-issues.md) - Framework-specific problems
+- [Angular Issues](angular-issues.md) - Angular-specific problems
 - [Integration Issues](integration-issues.md) - Editor and tool integration problems
 - [Network Issues](network-issues.md) - Connection and proxy problems
 
@@ -26,21 +26,21 @@ npx --version
 
 ```bash
 # Add GitHub token
-npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token_here
+npx spartan-ng-mcp-server --github-api-key ghp_your_token_here
 ```
 
 ### Component Not Found
 
 ```bash
 # Check available components first
-# Ask AI assistant: "List all available components"
+# Ask AI assistant: "List all available Spartan NG components"
 ```
 
-### Framework Issues
+### Angular Configuration Issues
 
 ```bash
-# Verify framework selection
-npx @jpisnice/shadcn-ui-mcp-server --framework svelte --help
+# Verify server configuration
+npx spartan-ng-mcp-server --help
 ```
 
 ## 🔧 Debug Mode
@@ -49,18 +49,18 @@ Enable verbose logging:
 
 ```bash
 # Set debug environment variable
-DEBUG=* npx @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_your_token
+DEBUG=* npx spartan-ng-mcp-server --github-api-key ghp_your_token
 ```
 
 ## 📞 Getting Help
 
-- 🐛 [Report Issues](https://github.com/Jpisnice/shadcn-ui-mcp-server/issues)
-- 💬 [Discussions](https://github.com/Jpisnice/shadcn-ui-mcp-server/discussions)
-- 📖 [Documentation](https://github.com/Jpisnice/shadcn-ui-mcp-server#readme)
+- 🐛 [Report Issues](https://github.com/your-org/spartan-ng-mcp-server/issues)
+- 💬 [Discussions](https://github.com/your-org/spartan-ng-mcp-server/discussions)
+- 📖 [Documentation](https://github.com/your-org/spartan-ng-mcp-server#readme)
 
 ## 🔗 Next Steps
 
 - [Installation Issues](installation-issues.md) - Detailed installation troubleshooting
 - [Rate Limit Issues](rate-limit-issues.md) - GitHub API problems
-- [Framework Issues](framework-issues.md) - Framework-specific problems
+- [Angular Issues](angular-issues.md) - Angular-specific problems
 - [Integration Issues](integration-issues.md) - Editor integration problems 
