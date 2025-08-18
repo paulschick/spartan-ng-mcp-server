@@ -312,16 +312,19 @@ async function getComponentFilesWithContent(
 async function getComponentDemo(componentName: string): Promise<string> {
     // Try to get Storybook stories for the component
     const storyPaths = [
-        `apps/ui-storybook/src/stories/${componentName.toLowerCase()}.stories.ts`,
+        `apps/ui-storybook/stories/${componentName.toLowerCase()}.stories.ts`,
         `apps/storybook/stories/${componentName.toLowerCase()}.stories.ts`,
         `${HELM_PATH}/${componentName.toLowerCase()}/src/lib/${componentName.toLowerCase()}.stories.ts`
     ];
     
     for (const storyPath of storyPaths) {
         try {
+            logInfo(`Trying to fetch story from: ${storyPath}`);
             const response = await githubRaw.get(`/${storyPath}`);
+            logInfo(`Successfully fetched story for ${componentName} from ${storyPath}`);
             return response.data;
-        } catch {
+        } catch (error: any) {
+            logWarning(`Failed to fetch story from ${storyPath}: ${error.response?.status || error.message}`);
             // Continue to next path
         }
     }
